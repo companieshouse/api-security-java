@@ -1,2 +1,2 @@
-# offensive-word-checker-api-poc
-POC for Offisensive Work Checker API
+# api-security-java
+Library for handling security in java API services
