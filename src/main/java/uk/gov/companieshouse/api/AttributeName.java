@@ -2,10 +2,7 @@ package uk.gov.companieshouse.api;
 
 public enum AttributeName {
 
-    TRANSACTION("transaction"),
-    COMPANY_ACCOUNT("accounts"),
-    SMALLFULL("small-full"),
-    CIC_REPORT("cic-report");
+    TRANSACTION("transaction");
 
     private String value;
 
