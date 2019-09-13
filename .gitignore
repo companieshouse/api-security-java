@@ -1,0 +1,12 @@
+# Build artifacts
+target/
+
+# IntelliJ Files
+.idea/
+*.iml
+
+# Eclipse Files
+.classpath
+.project
+.settings
+/bin/
