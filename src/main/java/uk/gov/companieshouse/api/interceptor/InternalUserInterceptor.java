@@ -15,8 +15,9 @@ import uk.gov.companieshouse.logging.Logger;
 import uk.gov.companieshouse.logging.LoggerFactory;
 
 /**
- *  Checks that the existing user is an internal user (using the Eric headers). This will be an api-key user.
- *  All requests to this application must be for internal users
+ * Pre handle method to authenticate the request before it reaches the controller by checking if
+ * the CH API key is valid. The request is also checked to see if the user is in a role which can
+ * make internal calls.
  */
 @Component
 public class InternalUserInterceptor extends HandlerInterceptorAdapter {
