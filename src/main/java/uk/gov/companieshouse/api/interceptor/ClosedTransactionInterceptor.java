@@ -13,8 +13,16 @@ import uk.gov.companieshouse.logging.LoggerFactory;
 
 public class ClosedTransactionInterceptor extends HandlerInterceptorAdapter {
 
-    private static final Logger LOGGER = LoggerFactory
-        .getLogger(String.valueOf(ClosedTransactionInterceptor.class));
+    private final Logger LOGGER;
+
+
+    public ClosedTransactionInterceptor() {
+        LOGGER = LoggerFactory.getLogger(String.valueOf(ClosedTransactionInterceptor.class));
+    }
+
+    public ClosedTransactionInterceptor(String logger) {
+        LOGGER = LoggerFactory.getLogger(logger);
+    }
 
     /**
      * Pre handle method to validate the request before it reaches the controller by checking if

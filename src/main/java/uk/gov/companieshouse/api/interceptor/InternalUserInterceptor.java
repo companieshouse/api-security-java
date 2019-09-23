@@ -22,7 +22,15 @@ import uk.gov.companieshouse.logging.LoggerFactory;
 @Component
 public class InternalUserInterceptor extends HandlerInterceptorAdapter {
     
-    private static final Logger LOG = LoggerFactory.getLogger(String.valueOf(InternalUserInterceptor.class));
+    private final Logger LOG;
+
+    public InternalUserInterceptor() {
+        LOG = LoggerFactory.getLogger(String.valueOf(InternalUserInterceptor.class));
+    }
+
+    public InternalUserInterceptor(String logger) {
+        LOG = LoggerFactory.getLogger(logger);
+    }
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response,  Object handler) throws IOException {   

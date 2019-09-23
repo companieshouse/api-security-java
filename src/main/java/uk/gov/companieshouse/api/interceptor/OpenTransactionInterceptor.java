@@ -12,9 +12,16 @@ import java.util.Map;
 
 public class OpenTransactionInterceptor extends HandlerInterceptorAdapter {
 
-    private static final Logger LOGGER = LoggerFactory
-        .getLogger(String.valueOf(OpenTransactionInterceptor.class));
+    private final Logger LOGGER;
 
+
+    public OpenTransactionInterceptor() {
+        LOGGER = LoggerFactory.getLogger(String.valueOf(OpenTransactionInterceptor.class));
+    }
+
+    public OpenTransactionInterceptor(String logger) {
+        LOGGER = LoggerFactory.getLogger(logger);
+    }
     /**
      * Pre handle method to validate the request before it reaches the controller by checking if the
      * request is a GET request and if the transaction's status is open.
