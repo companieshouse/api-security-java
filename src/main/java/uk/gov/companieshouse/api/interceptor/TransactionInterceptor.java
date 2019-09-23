@@ -22,11 +22,18 @@ import uk.gov.companieshouse.sdk.manager.ApiSdkManager;
 
 public class TransactionInterceptor extends HandlerInterceptorAdapter {
 
-    private static final Logger LOGGER = LoggerFactory
-        .getLogger(String.valueOf(TransactionInterceptor.class));
+    private final Logger LOGGER;
 
     @Autowired
     private ApiClientService apiClientService;
+
+    public TransactionInterceptor() {
+        LOGGER = LoggerFactory.getLogger(String.valueOf(TransactionInterceptor.class));
+    }
+
+    public TransactionInterceptor(String logger) {
+        LOGGER = LoggerFactory.getLogger(logger);
+    }
 
     /**
      * Pre handle method to validate the request before it reaches the controller. Check if the url
