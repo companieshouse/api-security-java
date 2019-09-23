@@ -32,7 +32,7 @@ import uk.gov.companieshouse.api.model.transaction.Transaction;
 public class TransactionInterceptorTest {
 
     @InjectMocks
-    private TransactionInterceptor transactionInterceptor;
+    private TransactionInterceptor transactionInterceptor = new TransactionInterceptor();
 
     @Mock
     private ApiClientService apiClientServiceMock;
