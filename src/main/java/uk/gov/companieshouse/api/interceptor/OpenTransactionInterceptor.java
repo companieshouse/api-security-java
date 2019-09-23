@@ -19,8 +19,8 @@ public class OpenTransactionInterceptor extends HandlerInterceptorAdapter {
         LOGGER = LoggerFactory.getLogger(String.valueOf(OpenTransactionInterceptor.class));
     }
 
-    public OpenTransactionInterceptor(String logger) {
-        LOGGER = LoggerFactory.getLogger(logger);
+    public OpenTransactionInterceptor(String loggingNamespace) {
+        LOGGER = LoggerFactory.getLogger(loggingNamespace);
     }
     /**
      * Pre handle method to validate the request before it reaches the controller by checking if the
