@@ -28,8 +28,8 @@ public class InternalUserInterceptor extends HandlerInterceptorAdapter {
         LOG = LoggerFactory.getLogger(String.valueOf(InternalUserInterceptor.class));
     }
 
-    public InternalUserInterceptor(String logger) {
-        LOG = LoggerFactory.getLogger(logger);
+    public InternalUserInterceptor(String loggingNamespace) {
+        LOG = LoggerFactory.getLogger(loggingNamespace);
     }
 
     @Override

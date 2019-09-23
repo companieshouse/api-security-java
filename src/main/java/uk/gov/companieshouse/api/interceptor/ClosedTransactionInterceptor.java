@@ -20,8 +20,8 @@ public class ClosedTransactionInterceptor extends HandlerInterceptorAdapter {
         LOGGER = LoggerFactory.getLogger(String.valueOf(ClosedTransactionInterceptor.class));
     }
 
-    public ClosedTransactionInterceptor(String logger) {
-        LOGGER = LoggerFactory.getLogger(logger);
+    public ClosedTransactionInterceptor(String loggingNamespace) {
+        LOGGER = LoggerFactory.getLogger(loggingNamespace);
     }
 
     /**

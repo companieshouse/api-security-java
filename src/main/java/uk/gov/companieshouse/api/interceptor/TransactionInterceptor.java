@@ -31,8 +31,8 @@ public class TransactionInterceptor extends HandlerInterceptorAdapter {
         LOGGER = LoggerFactory.getLogger(String.valueOf(TransactionInterceptor.class));
     }
 
-    public TransactionInterceptor(String logger) {
-        LOGGER = LoggerFactory.getLogger(logger);
+    public TransactionInterceptor(String loggingNamespace) {
+        LOGGER = LoggerFactory.getLogger(loggingNamespace);
     }
 
     /**
