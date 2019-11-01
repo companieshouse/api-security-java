@@ -18,7 +18,7 @@
         <!-- Dependency Versions -->
         <google-http-client-jackson2.version>1.22.0</google-http-client-jackson2.version>
         <google-oauth-client.version>1.22.0</google-oauth-client.version>
-        <jackson.version>2.9.9</jackson.version>
+        <jackson.version>2.10.0</jackson.version>
         <junit.version>4.11</junit.version>
         <maven-compiler-plugin.version>3.1</maven-compiler-plugin.version>
         <maven-jar-plugin.version>2.4</maven-jar-plugin.version>
