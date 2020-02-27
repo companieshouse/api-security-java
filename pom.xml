@@ -17,9 +17,9 @@
         <!-- Dependency Versions -->
         <maven-compiler-plugin.version>3.1</maven-compiler-plugin.version>
         <maven-jar-plugin.version>2.4</maven-jar-plugin.version>
-        <api-sdk-java.version>4.1.4</api-sdk-java.version>
+        <api-sdk-java.version>4.2.0</api-sdk-java.version>
         <structured-logging.version>1.9.3</structured-logging.version>
-        <api-sdk-manager-java-library.version>1.0.1</api-sdk-manager-java-library.version>
+        <api-sdk-manager-java-library.version>1.0.2</api-sdk-manager-java-library.version>
 
         <!-- JDK -->
         <source-level>1.8</source-level>
