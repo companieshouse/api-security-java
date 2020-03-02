@@ -2,9 +2,6 @@ package uk.gov.companieshouse.api.util.security;
 
 import javax.servlet.http.HttpServletRequest;
 
-import uk.gov.companieshouse.api.util.security.EricConstants;
-import uk.gov.companieshouse.api.util.security.RequestUtils;
-
 public final class AuthorisationUtil {
     private AuthorisationUtil() {}
     
@@ -18,6 +15,10 @@ public final class AuthorisationUtil {
     
     public static String getAuthorisedKeyRoles(HttpServletRequest request) {
         return RequestUtils.getRequestHeader(request, EricConstants.ERIC_AUTHORISED_KEY_ROLES);
+    }
+    
+    protected static String getAuthorisedTokenPermissions(HttpServletRequest request) {
+        return RequestUtils.getRequestHeader(request, EricConstants.ERIC_AUTHORISED_TOKEN_PERMISSIONS);
     }
     
     public static boolean hasInternalUserRole(HttpServletRequest request) {
