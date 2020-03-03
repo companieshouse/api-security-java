@@ -2,6 +2,7 @@ package uk.gov.companieshouse.api.util.security;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -12,12 +13,16 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
 
+import uk.gov.companieshouse.logging.Logger;
+import uk.gov.companieshouse.logging.LoggerFactory;
+
 /**
  * Reads and stores the authorised ERIC token permissions from a request and
  * provides a method to check them individually
  */
 public class TokenPermissions {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(String.valueOf(TokenPermissions.class));
     private static final Pattern PERMISSION_LIST_PATTERN = Pattern.compile("^\\w+=\\w+(,\\w+)*( \\w+=\\w+(,\\w+)*)*$");
 
     final String authorisedTokenPermissions;
@@ -42,7 +47,11 @@ public class TokenPermissions {
      */
     public boolean hasPermission(Permission.Key key, String value) {
         if (permissions == null) {
-            permissions = readTokenPermissions();
+            permissions = readTokenPermissions(authorisedTokenPermissions);
+            Map<String, Object> logData = new HashMap<>();
+            logData.put("ERIC authorised token permission header", authorisedTokenPermissions);
+            logData.put("Token permissions", permissions);
+            LOGGER.debug("Parsed ERIC token permissions", logData);
         }
 
         return permissions.getOrDefault(key.toString(), Collections.emptyList()).contains(value);
