@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -17,11 +18,18 @@ import org.apache.commons.lang.StringUtils;
  */
 public class TokenPermissions {
 
+    private static final Pattern PERMISSION_LIST_PATTERN = Pattern.compile("^\\w+=\\w+(,\\w+)*( \\w+=\\w+(,\\w+)*)*$");
+
     final String authorisedTokenPermissions;
     Map<String, List<String>> permissions;
 
-    public TokenPermissions(HttpServletRequest request) {
+    public TokenPermissions(HttpServletRequest request) throws InvalidTokenPermissionException{
         authorisedTokenPermissions = AuthorisationUtil.getAuthorisedTokenPermissions(request);
+        
+        if (authorisedTokenPermissions != null
+                && !PERMISSION_LIST_PATTERN.matcher(authorisedTokenPermissions).matches()) {
+            throw new InvalidTokenPermissionException(authorisedTokenPermissions);
+        }
     }
 
     /**
@@ -34,7 +42,7 @@ public class TokenPermissions {
      */
     public boolean hasPermission(Permission.Key key, String value) {
         if (permissions == null) {
-            permissions = readTokenPermissions(authorisedTokenPermissions);
+            permissions = readTokenPermissions();
         }
 
         return permissions.getOrDefault(key.toString(), Collections.emptyList()).contains(value);
@@ -51,16 +59,15 @@ public class TokenPermissions {
      *       "key2" : ["valueB"],
      *       "key3" : ["valueC", "valueD", "valueE"]
      * 
-     * @param authorisedTokenPermissions
+     * @param allPermissions
      * @return
      */
-    private Map<String, List<String>> readTokenPermissions(String authorisedTokenPermissions) {
-        if (StringUtils.isBlank(authorisedTokenPermissions)) {
+    private static Map<String, List<String>> readTokenPermissions(String allPermissions) {
+        if (StringUtils.isBlank(allPermissions)) {
             return Collections.emptyMap();
         }
-        return Stream.of(authorisedTokenPermissions.trim().split(" "))
+        return Stream.of(allPermissions.trim().split(" "))
                 .map(pair -> pair.split("="))
-                .filter(s -> s.length == 2) // Ignore invalid key/value pairs
                 .collect(Collectors.toMap(s -> s[0], s -> Arrays.asList(s[1].split(","))));
     }
 }
