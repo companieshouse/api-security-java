@@ -12,14 +12,52 @@ import org.mockito.Mockito;
 
 public class TokenPermissionsTest {
     
-    private static final String AUTHORISED_TOKEN_PERMISSIONS = "user_profile=read user_transactions=read,create,update company_auth_code=read,update,delete";
+    private static final String AUTHORISED_TOKEN_PERMISSIONS = "company_number=00001234 user_profile=read user_transactions=read,create,update company_auth_code=read,update,delete";
 
     TokenPermissions permissions;
 
     @Test
-    void hasPermissionKeyAndValue() throws InvalidTokenPermissionException {
+    void hasSingleCompanyNumberPermissionKeyAndValue() throws InvalidTokenPermissionException {
+        setupPermissionHeader("company_number=12345678");
+        assertTrue(permissions.hasPermission(Permission.Key.COMPANY_NUMBER, "12345678"));
+    }
+
+    @Test
+    void hasSingleUserProfilePermissionKeyAndValue() throws InvalidTokenPermissionException {
+        setupPermissionHeader("user_profile=read");
+        assertTrue(permissions.hasPermission(Permission.Key.USER_PROFILE, Permission.Value.READ));
+    }
+
+    @Test
+    void hasCRUDUserProfilePermissionKeyAndValue() throws InvalidTokenPermissionException {
+        setupPermissionHeader("user_profile=create,read,update,delete");
+        assertTrue(permissions.hasPermission(Permission.Key.USER_PROFILE, Permission.Value.CREATE));
+        assertTrue(permissions.hasPermission(Permission.Key.USER_PROFILE, Permission.Value.READ));
+        assertTrue(permissions.hasPermission(Permission.Key.USER_PROFILE, Permission.Value.UPDATE));
+        assertTrue(permissions.hasPermission(Permission.Key.USER_PROFILE, Permission.Value.DELETE));
+    }
+
+    @Test
+    void hasPermissionKeysAndValues() throws InvalidTokenPermissionException {
         setupPermissionHeader(AUTHORISED_TOKEN_PERMISSIONS);
+
+        assertTrue(permissions.hasPermission(Permission.Key.COMPANY_NUMBER, "00001234"));
+        assertFalse(permissions.hasPermission(Permission.Key.COMPANY_NUMBER, "43210000"));
+
+        assertFalse(permissions.hasPermission(Permission.Key.USER_PROFILE, Permission.Value.CREATE));
+        assertTrue(permissions.hasPermission(Permission.Key.USER_PROFILE, Permission.Value.READ));
+        assertFalse(permissions.hasPermission(Permission.Key.USER_PROFILE, Permission.Value.UPDATE));
+        assertFalse(permissions.hasPermission(Permission.Key.USER_PROFILE, Permission.Value.DELETE));
+
+        assertTrue(permissions.hasPermission(Permission.Key.USER_TRANSACTIONS, Permission.Value.CREATE));
+        assertTrue(permissions.hasPermission(Permission.Key.USER_TRANSACTIONS, Permission.Value.READ));
+        assertTrue(permissions.hasPermission(Permission.Key.USER_TRANSACTIONS, Permission.Value.UPDATE));
+        assertFalse(permissions.hasPermission(Permission.Key.USER_TRANSACTIONS, Permission.Value.DELETE));
+
+        assertFalse(permissions.hasPermission(Permission.Key.COMPANY_AUTH_CODE, Permission.Value.CREATE));
+        assertTrue(permissions.hasPermission(Permission.Key.COMPANY_AUTH_CODE, Permission.Value.READ));
         assertTrue(permissions.hasPermission(Permission.Key.COMPANY_AUTH_CODE, Permission.Value.UPDATE));
+        assertTrue(permissions.hasPermission(Permission.Key.COMPANY_AUTH_CODE, Permission.Value.DELETE));
     }
 
     @Test
