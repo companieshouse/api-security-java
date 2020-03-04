@@ -1,0 +1,74 @@
+package uk.gov.companieshouse.api.util.security;
+
+public class Permission {
+
+    public enum Key {
+        /**
+         * Key for the user profile permissions permissions
+         */
+        USER_PROFILE("user_profile"),
+        /**
+         * Key for the user transactions permissions
+         */
+        USER_TRANSACTIONS("user_transactions"),
+        /**
+         * Key for the user follow permissions
+         */
+        USER_FOLLOWING("user_following"),
+        /**
+         * Key for the user application/api client permissions
+         */
+        USER_APPLICATIONS("user_applications"),
+        /**
+         * Key for the detailing the company number for any company level permissions
+         */
+        COMPANY_NUMBER("company_number"),
+        /**
+         * Key for the company auth code permissions
+         */
+        COMPANY_AUTH_CODE("company_auth_code"),
+        /**
+         * Key for company registered office address (ROA) permissions
+         */
+        COMPANY_ROA("company_roa"),
+        /**
+         * Key for company accounts (annual accounts filing) permissions
+         */
+        COMPANY_ACCOUNTS("company_accounts");
+
+        private String stringValue;
+
+        private Key(String permissionKey) {
+            stringValue = permissionKey;
+        }
+
+        @Override
+        public String toString() {
+            return stringValue;
+        }
+    }
+    
+    public static class Value {
+        /**
+         * Value for resource creation permissions
+         */
+        public static final String CREATE = "create";
+        /**
+         * Value for resource reading permissions
+         */
+        public static final String READ = "read";
+        /**
+         * Value for resource updating permissions
+         */
+        public static final String UPDATE = "update";
+        /**
+         * Value for resource deletion permissions
+         */
+        public static final String DELETE = "delete";
+        
+        private Value() {
+            // Hide implicit public constructor
+        }
+    }
+
+}
