@@ -71,6 +71,12 @@ public class TokenPermissionsTest {
         setupPermissionHeader(AUTHORISED_TOKEN_PERMISSIONS);
         assertFalse(permissions.hasPermission(Permission.Key.COMPANY_ROA, Permission.Value.DELETE));
     }
+    
+    @Test
+    void hasPermissionNullValue() throws InvalidTokenPermissionException {
+        setupPermissionHeader(AUTHORISED_TOKEN_PERMISSIONS);
+        assertFalse(permissions.hasPermission(Permission.Key.COMPANY_NUMBER, null));
+    }
 
     @Test
     void hasPermissionMissingHeader() throws InvalidTokenPermissionException {
