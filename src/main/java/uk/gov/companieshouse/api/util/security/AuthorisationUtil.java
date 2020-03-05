@@ -28,6 +28,6 @@ public final class AuthorisationUtil {
     }
     
     public static Optional<TokenPermissions> getTokenPermissions(HttpServletRequest request) {
-        return Optional.ofNullable((TokenPermissions) request.getAttribute("token_permissions"));
+        return Optional.ofNullable((TokenPermissions) request.getAttribute(SecurityConstants.TOKEN_PERMISSION_REQUEST_KEY));
     }
 }
