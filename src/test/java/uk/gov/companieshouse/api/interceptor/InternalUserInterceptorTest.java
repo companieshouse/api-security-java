@@ -18,6 +18,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import uk.gov.companieshouse.api.util.security.EricConstants;
+import uk.gov.companieshouse.api.util.security.SecurityConstants;
 
 @ExtendWith(MockitoExtension.class)
 @TestInstance(Lifecycle.PER_CLASS)
@@ -38,8 +39,8 @@ class InternalUserInterceptorTest {
     @DisplayName("Test that Handler allows a user with the correct privilege through")
     public void testUserHasCorrectPriviledges() throws IOException {
         doReturn("test user").when(mockRequest).getHeader(EricConstants.ERIC_IDENTITY);
-        doReturn(EricConstants.API_KEY_IDENTITY_TYPE).when(mockRequest).getHeader(EricConstants.ERIC_IDENTITY_TYPE);
-        doReturn(EricConstants.INTERNAL_USER_ROLE).when(mockRequest).getHeader(EricConstants.ERIC_AUTHORISED_KEY_ROLES);
+        doReturn(SecurityConstants.API_KEY_IDENTITY_TYPE).when(mockRequest).getHeader(EricConstants.ERIC_IDENTITY_TYPE);
+        doReturn(SecurityConstants.INTERNAL_USER_ROLE).when(mockRequest).getHeader(EricConstants.ERIC_AUTHORISED_KEY_ROLES);
         assertTrue(internalUserInterceptor.preHandle(mockRequest, mockResponse, NO_HANDLER));
     }
     
@@ -61,7 +62,7 @@ class InternalUserInterceptorTest {
     @DisplayName("Test that Handler stops a request when API user does not have internal privileges")
     public void testNoInternalPriviledges() throws IOException {
         doReturn("test user").when(mockRequest).getHeader(EricConstants.ERIC_IDENTITY);
-        doReturn(EricConstants.API_KEY_IDENTITY_TYPE).when(mockRequest).getHeader(EricConstants.ERIC_IDENTITY_TYPE);
+        doReturn(SecurityConstants.API_KEY_IDENTITY_TYPE).when(mockRequest).getHeader(EricConstants.ERIC_IDENTITY_TYPE);
         doReturn("Yellow").when(mockRequest).getHeader(EricConstants.ERIC_AUTHORISED_KEY_ROLES);
         assertFalse(internalUserInterceptor.preHandle(mockRequest, mockResponse, NO_HANDLER));
     }

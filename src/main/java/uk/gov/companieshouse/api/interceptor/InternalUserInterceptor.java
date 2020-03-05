@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import uk.gov.companieshouse.api.util.security.AuthorisationUtil;
-import uk.gov.companieshouse.api.util.security.EricConstants;
+import uk.gov.companieshouse.api.util.security.SecurityConstants;
 import uk.gov.companieshouse.logging.Logger;
 import uk.gov.companieshouse.logging.LoggerFactory;
 
@@ -43,7 +43,7 @@ public class InternalUserInterceptor extends HandlerInterceptorAdapter {
         }
 
         final String identityType = AuthorisationUtil.getAuthorisedIdentityType(request);
-        if ( ! StringUtils.equals(identityType, EricConstants.API_KEY_IDENTITY_TYPE)) {
+        if ( ! StringUtils.equals(identityType, SecurityConstants.API_KEY_IDENTITY_TYPE)) {
             LOG.debugRequest(request, "invalid identity type [" + identityType + "]", null);
             response.setStatus(HttpServletResponse.SC_FORBIDDEN);
             return false;

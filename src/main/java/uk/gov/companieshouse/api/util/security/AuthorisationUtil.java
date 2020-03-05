@@ -1,5 +1,7 @@
 package uk.gov.companieshouse.api.util.security;
 
+import java.util.Optional;
+
 import javax.servlet.http.HttpServletRequest;
 
 public final class AuthorisationUtil {
@@ -22,6 +24,10 @@ public final class AuthorisationUtil {
     }
     
     public static boolean hasInternalUserRole(HttpServletRequest request) {
-        return EricConstants.INTERNAL_USER_ROLE.equals(getAuthorisedKeyRoles(request));
+        return SecurityConstants.INTERNAL_USER_ROLE.equals(getAuthorisedKeyRoles(request));
+    }
+    
+    public static Optional<TokenPermissions> getTokenPermissions(HttpServletRequest request) {
+        return Optional.ofNullable((TokenPermissions) request.getAttribute("token_permissions"));
     }
 }
