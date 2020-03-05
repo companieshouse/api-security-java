@@ -60,4 +60,28 @@ public class TokenPermissionsInterceptor extends HandlerInterceptorAdapter {
         // cleanup request to ensure it is never leaked into another request
         request.setAttribute(SecurityConstants.TOKEN_PERMISSION_REQUEST_KEY, null);
     }
+
+    /**
+     * Set the feature flag: if on (true) this interceptor will create a token
+     * permissions object which will check the relevant eric header to authorise via
+     * token permissions. If off (false), the object stored in the session will only
+     * check the header for the company number permission and authorise any other
+     * 
+     * @param enable
+     */
+    public void setEnableTokenPermission(boolean enable) {
+        enableTokenPermissionAuth = enable;
+    }
+    
+    /**
+     * Read the feature flag: if on (true) this interceptor will create a token
+     * permissions object which will check the relevant eric header to authorise via
+     * token permissions. If off (false), the object stored in the session will only
+     * check the header for the company number permission and authorise any other
+     * 
+     * @return True if the feature flag is on. False if it is off
+     */
+    public boolean isEnableTokenPermission() {
+        return enableTokenPermissionAuth;
+    }
 }
