@@ -14,7 +14,7 @@ public class TokenPermissionsTest {
     
     private static final String AUTHORISED_TOKEN_PERMISSIONS = "company_number=00001234 company_transactions=read user_profile=read user_transactions=read,create,update company_auth_code=read,update,delete";
 
-    TokenPermissions permissions;
+    TokenPermissionsImpl permissions;
 
     @Test
     void hasSingleCompanyNumberPermissionKeyAndValue() throws InvalidTokenPermissionException {
@@ -104,6 +104,6 @@ public class TokenPermissionsTest {
         HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
         when(request.getHeader("ERIC-Authorised-Token-Permissions")).thenReturn(authorisedTokenPermissins);
 
-        permissions = new TokenPermissions(request);
+        permissions = new TokenPermissionsImpl(request);
     }
 }
