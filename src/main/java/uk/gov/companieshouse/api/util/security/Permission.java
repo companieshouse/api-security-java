@@ -20,9 +20,17 @@ public class Permission {
          */
         USER_APPLICATIONS("user_applications"),
         /**
+         * Key for the user auth code request permissions
+         */
+        USER_REQUEST_AUTH_CODE("user_request_auth_code"),
+        /**
          * Key for the detailing the company number for any company level permissions
          */
         COMPANY_NUMBER("company_number"),
+        /**
+         * Key for the company transactions permissions
+         */
+        COMPANY_TRANSACTIONS("company_transactions"),
         /**
          * Key for the company auth code permissions
          */

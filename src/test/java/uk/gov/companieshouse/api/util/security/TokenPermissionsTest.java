@@ -12,7 +12,7 @@ import org.mockito.Mockito;
 
 public class TokenPermissionsTest {
     
-    private static final String AUTHORISED_TOKEN_PERMISSIONS = "company_number=00001234 user_profile=read user_transactions=read,create,update company_auth_code=read,update,delete";
+    private static final String AUTHORISED_TOKEN_PERMISSIONS = "company_number=00001234 company_transactions=read user_profile=read user_transactions=read,create,update company_auth_code=read,update,delete";
 
     TokenPermissions permissions;
 
@@ -58,6 +58,11 @@ public class TokenPermissionsTest {
         assertTrue(permissions.hasPermission(Permission.Key.COMPANY_AUTH_CODE, Permission.Value.READ));
         assertTrue(permissions.hasPermission(Permission.Key.COMPANY_AUTH_CODE, Permission.Value.UPDATE));
         assertTrue(permissions.hasPermission(Permission.Key.COMPANY_AUTH_CODE, Permission.Value.DELETE));
+
+        assertFalse(permissions.hasPermission(Permission.Key.COMPANY_TRANSACTIONS, Permission.Value.CREATE));
+        assertTrue(permissions.hasPermission(Permission.Key.COMPANY_TRANSACTIONS, Permission.Value.READ));
+        assertFalse(permissions.hasPermission(Permission.Key.COMPANY_TRANSACTIONS, Permission.Value.UPDATE));
+        assertFalse(permissions.hasPermission(Permission.Key.COMPANY_TRANSACTIONS, Permission.Value.DELETE));
     }
 
     @Test
