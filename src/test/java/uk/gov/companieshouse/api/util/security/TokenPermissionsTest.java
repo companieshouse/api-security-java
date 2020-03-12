@@ -90,14 +90,15 @@ public class TokenPermissionsTest {
     }
 
     @Test
-    void invalidTokenPermissions() {
-        assertThrows(InvalidTokenPermissionException.class, () -> setupPermissionHeader(
-                "user_profile=read user_transactions= company_auth_code=read,update,delete"));
+    void hasPermissionEmptyHeader() throws InvalidTokenPermissionException {
+        setupPermissionHeader("");
+        assertFalse(permissions.hasPermission(Permission.Key.COMPANY_AUTH_CODE, Permission.Value.UPDATE));
     }
 
     @Test
-    void invalidEmptyTokenPermissions() {
-        assertThrows(InvalidTokenPermissionException.class, () -> setupPermissionHeader(""));
+    void invalidTokenPermissions() {
+        assertThrows(InvalidTokenPermissionException.class, () -> setupPermissionHeader(
+                "user_profile=read user_transactions= company_auth_code=read,update,delete"));
     }
 
     private void setupPermissionHeader(String authorisedTokenPermissins) throws InvalidTokenPermissionException {

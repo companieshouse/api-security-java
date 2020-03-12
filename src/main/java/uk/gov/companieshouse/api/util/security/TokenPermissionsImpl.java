@@ -31,7 +31,7 @@ public class TokenPermissionsImpl implements TokenPermissions {
     public TokenPermissionsImpl(HttpServletRequest request) throws InvalidTokenPermissionException{
         authorisedTokenPermissions = AuthorisationUtil.getAuthorisedTokenPermissions(request);
         
-        if (authorisedTokenPermissions != null
+        if (!StringUtils.isBlank(authorisedTokenPermissions)
                 && !PERMISSION_LIST_PATTERN.matcher(authorisedTokenPermissions).matches()) {
             throw new InvalidTokenPermissionException(authorisedTokenPermissions);
         }
