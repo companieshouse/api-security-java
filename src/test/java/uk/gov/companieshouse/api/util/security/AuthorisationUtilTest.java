@@ -31,7 +31,16 @@ public class AuthorisationUtilTest {
         assertTrue(result.isPresent());
         assertEquals(tokenPermissions, result.get());
     }
-    
+
+    @Test
+    void getTokenPermissionsInvalidObject() {
+        when(request.getAttribute("token_permissions")).thenReturn(new Object());
+
+        Optional<TokenPermissions> result = AuthorisationUtil.getTokenPermissions(request);
+
+        assertFalse(result.isPresent());
+    }
+
     @Test
     void getTokenPermissionsMissingObject() {
         Optional<TokenPermissions> result = AuthorisationUtil.getTokenPermissions(request);
