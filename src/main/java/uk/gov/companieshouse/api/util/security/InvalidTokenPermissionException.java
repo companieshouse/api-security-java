@@ -1,8 +1,9 @@
 package uk.gov.companieshouse.api.util.security;
 
 public class InvalidTokenPermissionException extends Exception {
-    private static final long serialVersionUID = -8911200210133036075L;
-    
+
+    private static final long serialVersionUID = -7263125402151395706L;
+
     private final String authorisedTokenPermissions;
 
     public InvalidTokenPermissionException(String authorisedTokenPermissions) {
@@ -11,5 +12,10 @@ public class InvalidTokenPermissionException extends Exception {
 
     public String getAuthorisedTokenPermissions() {
         return authorisedTokenPermissions;
+    }
+
+    @Override
+    public String getMessage() {
+        return "Invalid token permission header: " + getAuthorisedTokenPermissions();
     }
 }
