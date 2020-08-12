@@ -136,6 +136,10 @@ class TokenPermissionsInterceptorTest {
         assertTrue(tokenPermissions.hasPermission(Key.COMPANY_ACCOUNTS, Value.UPDATE));
         assertTrue(tokenPermissions.hasPermission(Key.COMPANY_ACCOUNTS, Value.CREATE));
         assertTrue(tokenPermissions.hasPermission(Key.COMPANY_ACCOUNTS, Value.DELETE));
+        assertTrue(tokenPermissions.hasPermission(Key.COMPANY_STATUS, Value.READ));
+        assertTrue(tokenPermissions.hasPermission(Key.COMPANY_STATUS, Value.UPDATE));
+        assertTrue(tokenPermissions.hasPermission(Key.COMPANY_STATUS, Value.CREATE));
+        assertTrue(tokenPermissions.hasPermission(Key.COMPANY_STATUS, Value.DELETE));
         assertTrue(tokenPermissions.hasPermission(Key.USER_APPLICATIONS, Value.READ));
         assertTrue(tokenPermissions.hasPermission(Key.USER_APPLICATIONS, Value.UPDATE));
         assertTrue(tokenPermissions.hasPermission(Key.USER_APPLICATIONS, Value.CREATE));

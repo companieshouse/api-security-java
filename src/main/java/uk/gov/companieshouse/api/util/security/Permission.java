@@ -28,6 +28,10 @@ public class Permission {
          */
         COMPANY_NUMBER("company_number"),
         /**
+         * Key for the company status permissions
+         */
+        COMPANY_STATUS("company_status"),
+        /**
          * Key for the company transactions permissions
          */
         COMPANY_TRANSACTIONS("company_transactions"),
