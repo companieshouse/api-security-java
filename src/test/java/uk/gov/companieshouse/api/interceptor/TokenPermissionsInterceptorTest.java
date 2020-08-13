@@ -31,7 +31,7 @@ import uk.gov.companieshouse.api.util.security.TokenPermissionsImpl;
 @TestInstance(Lifecycle.PER_CLASS)
 class TokenPermissionsInterceptorTest {
 
-    private static final String AUTHORISED_TOKEN_PERMISSIONS = "company_number=00001234 user_profile=read user_transactions=read,create,update company_auth_code=read,update,delete";
+    private static final String AUTHORISED_TOKEN_PERMISSIONS = "company_number=00001234 user_profile=read user_transactions=read,create,update company_auth_code=read,update,delete company_status=read,update,delete";
     private static final Object HANDLER = null;
 
     @Mock
@@ -81,6 +81,10 @@ class TokenPermissionsInterceptorTest {
         assertFalse(tokenPermissions.hasPermission(Key.COMPANY_ACCOUNTS, Value.UPDATE));
         assertFalse(tokenPermissions.hasPermission(Key.COMPANY_ACCOUNTS, Value.CREATE));
         assertFalse(tokenPermissions.hasPermission(Key.COMPANY_ACCOUNTS, Value.DELETE));
+        assertTrue(tokenPermissions.hasPermission(Key.COMPANY_STATUS, Value.READ));
+        assertTrue(tokenPermissions.hasPermission(Key.COMPANY_STATUS, Value.UPDATE));
+        assertFalse(tokenPermissions.hasPermission(Key.COMPANY_STATUS, Value.CREATE));
+        assertTrue(tokenPermissions.hasPermission(Key.COMPANY_STATUS, Value.DELETE));
         assertFalse(tokenPermissions.hasPermission(Key.USER_APPLICATIONS, Value.READ));
         assertFalse(tokenPermissions.hasPermission(Key.USER_APPLICATIONS, Value.UPDATE));
         assertFalse(tokenPermissions.hasPermission(Key.USER_APPLICATIONS, Value.CREATE));
@@ -136,6 +140,10 @@ class TokenPermissionsInterceptorTest {
         assertTrue(tokenPermissions.hasPermission(Key.COMPANY_ACCOUNTS, Value.UPDATE));
         assertTrue(tokenPermissions.hasPermission(Key.COMPANY_ACCOUNTS, Value.CREATE));
         assertTrue(tokenPermissions.hasPermission(Key.COMPANY_ACCOUNTS, Value.DELETE));
+        assertTrue(tokenPermissions.hasPermission(Key.COMPANY_STATUS, Value.READ));
+        assertTrue(tokenPermissions.hasPermission(Key.COMPANY_STATUS, Value.UPDATE));
+        assertTrue(tokenPermissions.hasPermission(Key.COMPANY_STATUS, Value.CREATE));
+        assertTrue(tokenPermissions.hasPermission(Key.COMPANY_STATUS, Value.DELETE));
         assertTrue(tokenPermissions.hasPermission(Key.USER_APPLICATIONS, Value.READ));
         assertTrue(tokenPermissions.hasPermission(Key.USER_APPLICATIONS, Value.UPDATE));
         assertTrue(tokenPermissions.hasPermission(Key.USER_APPLICATIONS, Value.CREATE));
