@@ -31,7 +31,7 @@ import uk.gov.companieshouse.api.util.security.TokenPermissionsImpl;
 @TestInstance(Lifecycle.PER_CLASS)
 class TokenPermissionsInterceptorTest {
 
-    private static final String AUTHORISED_TOKEN_PERMISSIONS = "company_number=00001234 user_profile=read user_transactions=read,create,update company_auth_code=read,update,delete company_status=read,update,delete";
+    private static final String AUTHORISED_TOKEN_PERMISSIONS = "company_number=00001234 user_profile=read user_transactions=read,create,update company_auth_code=read,update,delete company_status=read,update,delete company_promise_to_file=update";
     private static final Object HANDLER = null;
 
     @Mock
@@ -93,6 +93,10 @@ class TokenPermissionsInterceptorTest {
         assertFalse(tokenPermissions.hasPermission(Key.COMPANY_ROA, Value.UPDATE));
         assertFalse(tokenPermissions.hasPermission(Key.COMPANY_ROA, Value.CREATE));
         assertFalse(tokenPermissions.hasPermission(Key.COMPANY_ROA, Value.DELETE));
+        assertFalse(tokenPermissions.hasPermission(Key.PROMISE_TO_FILE, Value.READ));
+        assertTrue(tokenPermissions.hasPermission(Key.PROMISE_TO_FILE, Value.UPDATE));
+        assertFalse(tokenPermissions.hasPermission(Key.PROMISE_TO_FILE, Value.CREATE));
+        assertFalse(tokenPermissions.hasPermission(Key.PROMISE_TO_FILE, Value.DELETE));
     }
 
     @Test
@@ -152,6 +156,10 @@ class TokenPermissionsInterceptorTest {
         assertTrue(tokenPermissions.hasPermission(Key.COMPANY_ROA, Value.UPDATE));
         assertTrue(tokenPermissions.hasPermission(Key.COMPANY_ROA, Value.CREATE));
         assertTrue(tokenPermissions.hasPermission(Key.COMPANY_ROA, Value.DELETE));
+        assertTrue(tokenPermissions.hasPermission(Key.PROMISE_TO_FILE, Value.READ));
+        assertTrue(tokenPermissions.hasPermission(Key.PROMISE_TO_FILE, Value.UPDATE));
+        assertTrue(tokenPermissions.hasPermission(Key.PROMISE_TO_FILE, Value.CREATE));
+        assertTrue(tokenPermissions.hasPermission(Key.PROMISE_TO_FILE, Value.DELETE));
     }
 
     @Test
