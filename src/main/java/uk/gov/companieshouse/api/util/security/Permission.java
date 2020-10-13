@@ -46,7 +46,11 @@ public class Permission {
         /**
          * Key for company accounts (annual accounts filing) permissions
          */
-        COMPANY_ACCOUNTS("company_accounts");
+        COMPANY_ACCOUNTS("company_accounts"),
+        /**
+         * Key for promise to file permissions
+         */
+        PROMISE_TO_FILE("company_promise_to_file");
 
         private String stringValue;
 
