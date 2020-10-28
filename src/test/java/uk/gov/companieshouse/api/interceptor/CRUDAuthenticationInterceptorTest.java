@@ -1,8 +1,10 @@
 package uk.gov.companieshouse.api.interceptor;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
@@ -19,6 +21,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -27,6 +31,7 @@ import uk.gov.companieshouse.api.util.security.InvalidTokenPermissionException;
 import uk.gov.companieshouse.api.util.security.Permission;
 import uk.gov.companieshouse.api.util.security.Permission.Value;
 import uk.gov.companieshouse.api.util.security.TokenPermissions;
+import uk.gov.companieshouse.api.util.security.TokenPermissionsImpl;
 
 @ExtendWith(MockitoExtension.class)
 @TestInstance(Lifecycle.PER_CLASS)
@@ -47,10 +52,56 @@ public class CRUDAuthenticationInterceptorTest {
     @Mock
     private TokenPermissions tokenPermissions;
 
+    @Captor
+    private ArgumentCaptor<TokenPermissions> tokenPermissionsCaptor;
+
     @Test
-    @DisplayName("Test preHandle when TokenPermissions is not present in request")
-    void preHandleMissingTokenPermissions() throws Exception {
+    @DisplayName("Test preHandle when TokenPermissions is not present in request and the header is invalid")
+    void preHandleMissingTokenPermissionsInvalidHeader() throws Exception {
+        when(request.getHeader("ERIC-Authorised-Token-Permissions")).thenReturn("invalid");
+
         assertThrows(IllegalStateException.class, () -> interceptor.preHandle(request, response, HANDLER));
+    }
+
+    @Test
+    @DisplayName("Test preHandle when TokenPermissions is not present in request and feature flag is on")
+    void preHandleMissingTokenPermissions() throws Exception {
+        interceptor.enableTokenPermissionAuth = true;
+        
+        final String permissionsHeader = "company_number=00001234 " + permissionKey + "=create";
+        when(request.getHeader("ERIC-Authorised-Token-Permissions")).thenReturn(permissionsHeader);
+
+        when(request.getMethod()).thenReturn("POST");
+
+        assertTrue(interceptor.preHandle(request, response, HANDLER));
+        
+        verifyNoInteractions(response);
+        verify(request).setAttribute(eq("token_permissions"), tokenPermissionsCaptor.capture());
+        TokenPermissions tokenPermissions = tokenPermissionsCaptor.getValue();
+
+        assertNotNull(tokenPermissions);
+        assertTrue(tokenPermissions instanceof TokenPermissionsImpl);
+    }
+
+    @Test
+    @DisplayName("Test preHandle when TokenPermissions is not present in request and feature flag is off")
+    void preHandleMissingTokenPermissionsFlagOff() throws Exception {
+        interceptor.enableTokenPermissionAuth = false;
+        
+        final String permissionsHeader = "company_number=00001234";
+        when(request.getHeader("ERIC-Authorised-Token-Permissions")).thenReturn(permissionsHeader);
+
+        when(request.getMethod()).thenReturn("POST");
+
+        assertTrue(interceptor.preHandle(request, response, HANDLER));
+        
+        verifyNoInteractions(response);
+        verify(request).setAttribute(eq("token_permissions"), tokenPermissionsCaptor.capture());
+        TokenPermissions tokenPermissions = tokenPermissionsCaptor.getValue();
+
+        assertNotNull(tokenPermissions);
+        // It is a lambda implementation when the flag is off
+        assertFalse(tokenPermissions instanceof TokenPermissionsImpl);
     }
 
     @Test
@@ -286,7 +337,16 @@ public class CRUDAuthenticationInterceptorTest {
         verify(response).setStatus(401);
         verifyNoMoreInteractions(tokenPermissions);
     }
+
+    @Test
+    @DisplayName("Test that the postHandle method removes the TokenPermissions object from the request")
+    void postHandle() throws Exception {
+        interceptor.postHandle(request, response, HANDLER, null);
+
+        verify(request).setAttribute("token_permissions", null);
+    }
+
     private void setupTokenPermissions() {
-        doReturn(Optional.of(tokenPermissions)).when(interceptor).getTokenPermissions(request);
+        doReturn(Optional.of(tokenPermissions)).when(interceptor).getTokenPermissionsFromRequest(request);
     }
 }
