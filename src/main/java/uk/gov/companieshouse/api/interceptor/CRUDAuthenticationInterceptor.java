@@ -40,22 +40,7 @@ public class CRUDAuthenticationInterceptor extends HandlerInterceptorAdapter {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws InvalidTokenPermissionException{
-        // TokenPermissions should have been set up in the request by TokenPermissionsInterceptor
-        final TokenPermissions tokenPermissions = getTokenPermissionsFromRequest(request)
-                .orElseGet(() -> {
-                    try {
-                        TokenPermissions tp = InterceptorHelper.readTokenPermissions(request,
-                                enableTokenPermissionAuth);
-                        InterceptorHelper.storeTokenPermissionsInRequest(tp, request);
-                        Map<String, Object> loggedData = new HashMap<>();
-                        loggedData.put("Feature flag ENABLE_TOKEN_PERMISSION_AUTH", enableTokenPermissionAuth);
-                        LOGGER.debug("Create TokenPermissions and store it in request", loggedData);
-                        return tp;
-                    } catch (InvalidTokenPermissionException e) {
-                        // Wrap into a runtime exception to fit the Supplier interface
-                        throw new IllegalStateException(e);
-                    }
-                });
+        final TokenPermissions tokenPermissions = getTokenPermissions(request);
 
         final String permissionValue = getValue(request);
         final boolean authorised = tokenPermissions.hasPermission(permissionKey, permissionValue);
@@ -78,6 +63,31 @@ public class CRUDAuthenticationInterceptor extends HandlerInterceptorAdapter {
             ModelAndView modelAndView) throws Exception {
         // cleanup request to ensure it is never leaked into another request
         InterceptorHelper.storeTokenPermissionsInRequest(null, request);
+    }
+    
+    /**
+     * Get the token permissions object from the request or create one (and store it
+     * in the request) if there is not one
+     * 
+     * @param request
+     * @return
+     */
+    private TokenPermissions getTokenPermissions(HttpServletRequest request) {
+        // TokenPermissions could have been set up in the request by
+        // TokenPermissionsInterceptor or another instance of this interceptor
+        return getTokenPermissionsFromRequest(request).orElseGet(() -> {
+            try {
+                TokenPermissions tp = InterceptorHelper.readTokenPermissions(request, enableTokenPermissionAuth);
+                InterceptorHelper.storeTokenPermissionsInRequest(tp, request);
+                Map<String, Object> loggedData = new HashMap<>();
+                loggedData.put("Feature flag ENABLE_TOKEN_PERMISSION_AUTH", enableTokenPermissionAuth);
+                LOGGER.debug("Create TokenPermissions and store it in request", loggedData);
+                return tp;
+            } catch (InvalidTokenPermissionException e) {
+                // Wrap into a runtime exception to fit the Supplier interface
+                throw new IllegalStateException(e);
+            }
+        });
     }
 
     protected Optional<TokenPermissions> getTokenPermissionsFromRequest(HttpServletRequest request) {
