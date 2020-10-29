@@ -20,6 +20,10 @@ public class Permission {
          */
         USER_APPLICATIONS("user_applications"),
         /**
+         * Key for the user orders permissions
+         */
+        USER_ORDERS("user_orders"),
+        /**
          * Key for the user auth code request permissions
          */
         USER_REQUEST_AUTH_CODE("user_request_auth_code"),
