@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -41,7 +42,7 @@ public class CRUDAuthenticationInterceptorTest {
     private final Permission.Key permissionKey = Permission.Key.USER_PROFILE;
 
     @Spy
-    private CRUDAuthenticationInterceptor interceptor = new CRUDAuthenticationInterceptor(permissionKey);
+    private CRUDAuthenticationInterceptor interceptor = new CRUDAuthenticationInterceptor(permissionKey, "IGNORED", "OTHER");
 
     @Mock
     private HttpServletRequest request;
@@ -339,11 +340,32 @@ public class CRUDAuthenticationInterceptorTest {
     }
 
     @Test
+    @DisplayName("Test that the preHandle method does nothing when the HTTP method is ignored")
+    void preHandleIgnoreRequest() throws Exception {
+        when(request.getMethod()).thenReturn("OTHER");
+
+        assertTrue(interceptor.preHandle(request, response, HANDLER));
+
+        verifyNoMoreInteractions(request);
+    }
+
+    @Test
     @DisplayName("Test that the postHandle method removes the TokenPermissions object from the request")
     void postHandle() throws Exception {
         interceptor.postHandle(request, response, HANDLER, null);
 
         verify(request).setAttribute("token_permissions", null);
+    }
+
+    @Test
+    @DisplayName("Test that the postHandle method does nothing when the HTTP method is ignored")
+    void postHandleIgnoredMethod() throws Exception {
+        when(request.getMethod()).thenReturn("IGNORED");
+
+        interceptor.postHandle(request, response, HANDLER, null);
+
+        verify(interceptor, never()).getTokenPermissionsFromRequest(request);
+        verifyNoMoreInteractions(request);
     }
 
     private void setupTokenPermissions() {

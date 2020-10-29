@@ -1,8 +1,11 @@
 package uk.gov.companieshouse.api.interceptor;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -33,13 +36,24 @@ public class CRUDAuthenticationInterceptor extends HandlerInterceptorAdapter {
     boolean enableTokenPermissionAuth;
 
     private final Permission.Key permissionKey;
+    private final Set<String> ignoredHttpMethods;
 
-    public CRUDAuthenticationInterceptor(Permission.Key permissionKey) {
+    /**
+     * 
+     * @param permissionKey The expected permission key
+     * @param ignoredHttpMethods An optional array of http methods for which the interceptor won't run
+     */
+    public CRUDAuthenticationInterceptor(Permission.Key permissionKey, String... ignoredHttpMethods) {
         this.permissionKey = permissionKey;
+        this.ignoredHttpMethods = new HashSet<>(Arrays.asList(ignoredHttpMethods));
     }
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws InvalidTokenPermissionException{
+        if (ignoreRequest(request)) {
+            return true;
+        }
+
         final TokenPermissions tokenPermissions = getTokenPermissions(request);
 
         final String permissionValue = getValue(request);
@@ -61,10 +75,15 @@ public class CRUDAuthenticationInterceptor extends HandlerInterceptorAdapter {
     @Override
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler,
             ModelAndView modelAndView) throws Exception {
-        // cleanup request to ensure it is never leaked into another request
-        InterceptorHelper.storeTokenPermissionsInRequest(null, request);
+        if (!ignoreRequest(request)) {
+            // cleanup request to ensure it is never leaked into another request
+            InterceptorHelper.storeTokenPermissionsInRequest(null, request);
+        }
     }
     
+    private boolean ignoreRequest(HttpServletRequest request) {
+        return ignoredHttpMethods.contains(request.getMethod());
+    }
     /**
      * Get the token permissions object from the request or create one (and store it
      * in the request) if there is not one
