@@ -41,7 +41,16 @@ public class CRUDAuthenticationInterceptor extends HandlerInterceptorAdapter {
     private final Set<String> ignoredHttpMethods;
 
     /**
-     * 
+     *
+     * @param permissionKey The expected permission key
+     * @param ignoredHttpMethods An optional array of http methods for which the interceptor won't run
+     */
+    public CRUDAuthenticationInterceptor(Permission.Key permissionKey, String... ignoredHttpMethods) {
+        this(permissionKey, false, ignoredHttpMethods);
+    }
+
+    /**
+     *
      * @param permissionKey The expected permission key
      * @param ignoreAPIKeyRequests If true this interceptor will allow any API key traffic through.
      *         Other specific API key checks (for elevated privileges etc) should be applied to these routes to cover specific logic when this is true.

@@ -44,7 +44,7 @@ public class CRUDAuthenticationInterceptorTest {
     private final Permission.Key permissionKey = Permission.Key.USER_PROFILE;
 
     @Spy
-    private CRUDAuthenticationInterceptor interceptor = new CRUDAuthenticationInterceptor(permissionKey, false, "IGNORED", "OTHER");
+    private CRUDAuthenticationInterceptor interceptor = new CRUDAuthenticationInterceptor(permissionKey, "IGNORED", "OTHER");
 
     @Mock
     private HttpServletRequest request;
