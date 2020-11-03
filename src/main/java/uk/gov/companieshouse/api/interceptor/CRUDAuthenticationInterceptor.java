@@ -18,6 +18,7 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import uk.gov.companieshouse.api.util.security.AuthorisationUtil;
 import uk.gov.companieshouse.api.util.security.InvalidTokenPermissionException;
 import uk.gov.companieshouse.api.util.security.Permission;
+import uk.gov.companieshouse.api.util.security.SecurityConstants;
 import uk.gov.companieshouse.api.util.security.TokenPermissions;
 import uk.gov.companieshouse.logging.Logger;
 import uk.gov.companieshouse.logging.LoggerFactory;
@@ -36,15 +37,19 @@ public class CRUDAuthenticationInterceptor extends HandlerInterceptorAdapter {
     boolean enableTokenPermissionAuth;
 
     private final Permission.Key permissionKey;
+    private final boolean ignoreAPIKeyRequests;
     private final Set<String> ignoredHttpMethods;
 
     /**
      * 
      * @param permissionKey The expected permission key
+     * @param ignoreAPIKeyRequests If true this interceptor will allow any API key traffic through.
+     *         Other specific API key checks (for elevated privileges etc) should be applied to these routes to cover specific logic when this is true.
      * @param ignoredHttpMethods An optional array of http methods for which the interceptor won't run
      */
-    public CRUDAuthenticationInterceptor(Permission.Key permissionKey, String... ignoredHttpMethods) {
+    public CRUDAuthenticationInterceptor(Permission.Key permissionKey, boolean ignoreAPIKeyRequests, String... ignoredHttpMethods) {
         this.permissionKey = permissionKey;
+        this.ignoreAPIKeyRequests  = ignoreAPIKeyRequests;
         this.ignoredHttpMethods = new HashSet<>(Arrays.asList(ignoredHttpMethods));
     }
 
@@ -82,7 +87,8 @@ public class CRUDAuthenticationInterceptor extends HandlerInterceptorAdapter {
     }
     
     private boolean ignoreRequest(HttpServletRequest request) {
-        return ignoredHttpMethods.contains(request.getMethod());
+        return ignoredHttpMethods.contains(request.getMethod()) ||
+                (this.ignoreAPIKeyRequests && SecurityConstants.API_KEY_IDENTITY_TYPE.equals(AuthorisationUtil.getAuthorisedIdentityType(request)));
     }
     /**
      * Get the token permissions object from the request or create one (and store it

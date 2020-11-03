@@ -28,9 +28,11 @@ import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import uk.gov.companieshouse.api.util.security.EricConstants;
 import uk.gov.companieshouse.api.util.security.InvalidTokenPermissionException;
 import uk.gov.companieshouse.api.util.security.Permission;
 import uk.gov.companieshouse.api.util.security.Permission.Value;
+import uk.gov.companieshouse.api.util.security.SecurityConstants;
 import uk.gov.companieshouse.api.util.security.TokenPermissions;
 import uk.gov.companieshouse.api.util.security.TokenPermissionsImpl;
 
@@ -42,7 +44,7 @@ public class CRUDAuthenticationInterceptorTest {
     private final Permission.Key permissionKey = Permission.Key.USER_PROFILE;
 
     @Spy
-    private CRUDAuthenticationInterceptor interceptor = new CRUDAuthenticationInterceptor(permissionKey, "IGNORED", "OTHER");
+    private CRUDAuthenticationInterceptor interceptor = new CRUDAuthenticationInterceptor(permissionKey, false, "IGNORED", "OTHER");
 
     @Mock
     private HttpServletRequest request;
@@ -365,6 +367,19 @@ public class CRUDAuthenticationInterceptorTest {
         interceptor.postHandle(request, response, HANDLER, null);
 
         verify(interceptor, never()).getTokenPermissionsFromRequest(request);
+        verifyNoMoreInteractions(request);
+    }
+
+    @Test
+    @DisplayName("Test that the ignoreAPIKeyRequests flag ignores API key request")
+    void ignoreAPIKeyRequestsGetRequest() throws Exception {
+        // custom interceptor with ignore api key flag set
+        CRUDAuthenticationInterceptor customInterceptor = new CRUDAuthenticationInterceptor(permissionKey, true);
+        when(request.getMethod()).thenReturn("GET");
+        when(request.getHeader(EricConstants.ERIC_IDENTITY_TYPE)).thenReturn(SecurityConstants.API_KEY_IDENTITY_TYPE);
+
+        assertTrue(customInterceptor.preHandle(request, response, HANDLER));
+
         verifyNoMoreInteractions(request);
     }
 
