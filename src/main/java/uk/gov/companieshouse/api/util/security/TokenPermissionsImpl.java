@@ -25,29 +25,26 @@ public class TokenPermissionsImpl implements TokenPermissions {
     private static final Logger LOGGER = LoggerFactory.getLogger(String.valueOf(TokenPermissionsImpl.class));
     private static final Pattern PERMISSION_LIST_PATTERN = Pattern.compile("^\\w+=\\w+(,\\w+)*( \\w+=\\w+(,\\w+)*)*$");
 
-    final String authorisedTokenPermissions;
-    Map<String, List<String>> permissions;
+    private final Map<String, List<String>> permissions;
 
     public TokenPermissionsImpl(HttpServletRequest request) throws InvalidTokenPermissionException{
-        authorisedTokenPermissions = AuthorisationUtil.getAuthorisedTokenPermissions(request);
-        
+        String authorisedTokenPermissions = AuthorisationUtil.getAuthorisedTokenPermissions(request);
+
         if (!StringUtils.isBlank(authorisedTokenPermissions)
                 && !PERMISSION_LIST_PATTERN.matcher(authorisedTokenPermissions).matches()) {
             throw new InvalidTokenPermissionException(authorisedTokenPermissions);
         }
+
+        permissions = readTokenPermissions(authorisedTokenPermissions);
+        Map<String, Object> logData = new HashMap<>();
+        logData.put("ERIC authorised token permission header", authorisedTokenPermissions);
+        logData.put("Token permissions", permissions);
+        LOGGER.debugRequest(request, "Parsed ERIC token permissions", logData);
     }
 
 
     @Override
     public boolean hasPermission(Permission.Key key, String value) {
-        if (permissions == null) {
-            permissions = readTokenPermissions(authorisedTokenPermissions);
-            Map<String, Object> logData = new HashMap<>();
-            logData.put("ERIC authorised token permission header", authorisedTokenPermissions);
-            logData.put("Token permissions", permissions);
-            LOGGER.debug("Parsed ERIC token permissions", logData);
-        }
-
         return permissions.getOrDefault(key.toString(), Collections.emptyList()).contains(value);
     }
 
