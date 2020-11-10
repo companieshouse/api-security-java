@@ -33,11 +33,15 @@ public class TokenPermissionsInterceptor extends HandlerInterceptorAdapter {
             throws InvalidTokenPermissionException {
         Map<String, Object> loggedData = new HashMap<>();
         loggedData.put("Feature flag ENABLE_TOKEN_PERMISSION_AUTH", enableTokenPermissionAuth);
-        LOGGER.debug("Create TokenPermissions and store it in request", loggedData);
+        LOGGER.debugRequest(request, "Create TokenPermissions and store it in request", loggedData);
 
-        TokenPermissions tokenPermissions = InterceptorHelper.readTokenPermissions(request, enableTokenPermissionAuth);
+        TokenPermissions tokenPermissions = readTokenPermissions(request);
         InterceptorHelper.storeTokenPermissionsInRequest(tokenPermissions, request);
         return true;
+    }
+
+    TokenPermissions readTokenPermissions(HttpServletRequest request) throws InvalidTokenPermissionException {
+        return InterceptorHelper.readTokenPermissions(request, enableTokenPermissionAuth);
     }
 
     @Override

@@ -115,7 +115,7 @@ public class CRUDAuthenticationInterceptor extends HandlerInterceptorAdapter {
                 InterceptorHelper.storeTokenPermissionsInRequest(tp, request);
                 Map<String, Object> loggedData = new HashMap<>();
                 loggedData.put("Feature flag ENABLE_TOKEN_PERMISSION_AUTH", enableTokenPermissionAuth);
-                LOGGER.debug("Create TokenPermissions and store it in request", loggedData);
+                LOGGER.debugRequest(request, "Create TokenPermissions and store it in request", loggedData);
                 return tp;
             } catch (InvalidTokenPermissionException e) {
                 // Wrap into a runtime exception to fit the Supplier interface
