@@ -6,7 +6,6 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
@@ -25,14 +24,10 @@ public class TokenPermissionsInterceptor extends HandlerInterceptorAdapter {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(String.valueOf(TokenPermissionsInterceptor.class));
 
-    @Value("${ENABLE_TOKEN_PERMISSION_AUTH:#{false}}")
-    boolean enableTokenPermissionAuth;
-
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
             throws InvalidTokenPermissionException {
         Map<String, Object> loggedData = new HashMap<>();
-        loggedData.put("Feature flag ENABLE_TOKEN_PERMISSION_AUTH", enableTokenPermissionAuth);
         LOGGER.debugRequest(request, "Create TokenPermissions and store it in request", loggedData);
 
         TokenPermissions tokenPermissions = readTokenPermissions(request);
@@ -41,7 +36,7 @@ public class TokenPermissionsInterceptor extends HandlerInterceptorAdapter {
     }
 
     TokenPermissions readTokenPermissions(HttpServletRequest request) throws InvalidTokenPermissionException {
-        return InterceptorHelper.readTokenPermissions(request, enableTokenPermissionAuth);
+        return InterceptorHelper.readTokenPermissions(request);
     }
 
     @Override

@@ -29,12 +29,11 @@ public class InterceptorHelperTest {
     @DisplayName("Test readTokenPermissions")
     void readTokenPermissions() throws InvalidTokenPermissionException {
         HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
-        final boolean featureFlag = true;
 
         when(request.getHeader("ERIC-Authorised-Token-Permissions"))
                 .thenReturn("company_number=00001234 user_profile=read");
 
-        TokenPermissions tp = InterceptorHelper.readTokenPermissions(request, featureFlag);
+        TokenPermissions tp = InterceptorHelper.readTokenPermissions(request);
 
         assertNotNull(tp);
         assertTrue(tp instanceof TokenPermissionsImpl);
@@ -44,28 +43,6 @@ public class InterceptorHelperTest {
         assertFalse(tp.hasPermission(Key.USER_PROFILE, Value.UPDATE));
         assertFalse(tp.hasPermission(Key.USER_PROFILE, Value.CREATE));
         assertFalse(tp.hasPermission(Key.USER_PROFILE, Value.DELETE));
-    }
-
-    @Test
-    @DisplayName("Test readTokenPermissions when feature flag is off")
-    void readTokenPermissionsFlagOff() throws InvalidTokenPermissionException {
-        HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
-        final boolean featureFlag = false;
-
-        when(request.getHeader("ERIC-Authorised-Token-Permissions"))
-                .thenReturn("company_number=00001234 user_profile=read");
-
-        TokenPermissions tp = InterceptorHelper.readTokenPermissions(request, featureFlag);
-
-        assertNotNull(tp);
-        // It is a lambda implementation when the flag is off
-        assertFalse(tp instanceof TokenPermissionsImpl);
-        assertTrue(tp.hasPermission(Key.COMPANY_NUMBER, "00001234"));
-        assertFalse(tp.hasPermission(Key.COMPANY_NUMBER, "88888888"));
-        assertTrue(tp.hasPermission(Key.USER_PROFILE, Value.READ));
-        assertTrue(tp.hasPermission(Key.USER_PROFILE, Value.UPDATE));
-        assertTrue(tp.hasPermission(Key.USER_PROFILE, Value.CREATE));
-        assertTrue(tp.hasPermission(Key.USER_PROFILE, Value.DELETE));
     }
 
     @Test
