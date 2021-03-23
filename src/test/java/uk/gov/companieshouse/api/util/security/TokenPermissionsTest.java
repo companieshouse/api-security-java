@@ -10,8 +10,8 @@ import javax.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-public class TokenPermissionsTest {
-    
+class TokenPermissionsTest {
+
     private static final String AUTHORISED_TOKEN_PERMISSIONS = "company_number=00001234 company_transactions=read user_profile=read user_transactions=read,create,update company_auth_code=read,update,delete company_status=read,update,delete company_promise_to_file=update";
 
     TokenPermissionsImpl permissions;

@@ -23,7 +23,7 @@ import uk.gov.companieshouse.api.util.security.Permission.Key;
 import uk.gov.companieshouse.api.util.security.Permission.Value;
 
 @ExtendWith(MockitoExtension.class)
-public class InterceptorHelperTest {
+class InterceptorHelperTest {
 
     @Test
     @DisplayName("Test readTokenPermissions")
