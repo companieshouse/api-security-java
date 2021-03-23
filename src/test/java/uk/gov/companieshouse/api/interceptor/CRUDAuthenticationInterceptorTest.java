@@ -67,10 +67,8 @@ class CRUDAuthenticationInterceptorTest {
     }
 
     @Test
-    @DisplayName("Test preHandle when TokenPermissions is not present in request and feature flag is on")
+    @DisplayName("Test preHandle when TokenPermissions is not present in request")
     void preHandleMissingTokenPermissions() throws Exception {
-        interceptor.enableTokenPermissionAuth = true;
-        
         final String permissionsHeader = "company_number=00001234 " + permissionKey + "=create";
         when(request.getHeader("ERIC-Authorised-Token-Permissions")).thenReturn(permissionsHeader);
 
@@ -84,27 +82,6 @@ class CRUDAuthenticationInterceptorTest {
 
         assertNotNull(tokenPermissions);
         assertTrue(tokenPermissions instanceof TokenPermissionsImpl);
-    }
-
-    @Test
-    @DisplayName("Test preHandle when TokenPermissions is not present in request and feature flag is off")
-    void preHandleMissingTokenPermissionsFlagOff() throws Exception {
-        interceptor.enableTokenPermissionAuth = false;
-        
-        final String permissionsHeader = "company_number=00001234";
-        when(request.getHeader("ERIC-Authorised-Token-Permissions")).thenReturn(permissionsHeader);
-
-        when(request.getMethod()).thenReturn("POST");
-
-        assertTrue(interceptor.preHandle(request, response, HANDLER));
-        
-        verifyNoInteractions(response);
-        verify(request).setAttribute(eq("token_permissions"), tokenPermissionsCaptor.capture());
-        TokenPermissions tokenPermissions = tokenPermissionsCaptor.getValue();
-
-        assertNotNull(tokenPermissions);
-        // It is a lambda implementation when the flag is off
-        assertFalse(tokenPermissions instanceof TokenPermissionsImpl);
     }
 
     @Test

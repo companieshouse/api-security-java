@@ -33,9 +33,6 @@ public class CRUDAuthenticationInterceptor extends HandlerInterceptorAdapter {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(String.valueOf(CRUDAuthenticationInterceptor.class));
 
-    @Value("${ENABLE_TOKEN_PERMISSION_AUTH:#{false}}")
-    boolean enableTokenPermissionAuth;
-
     private final Permission.Key permissionKey;
     private final boolean ignoreAPIKeyRequests;
     private final Set<String> ignoredHttpMethods;
@@ -111,10 +108,9 @@ public class CRUDAuthenticationInterceptor extends HandlerInterceptorAdapter {
         // TokenPermissionsInterceptor or another instance of this interceptor
         return getTokenPermissionsFromRequest(request).orElseGet(() -> {
             try {
-                TokenPermissions tp = InterceptorHelper.readTokenPermissions(request, enableTokenPermissionAuth);
+                TokenPermissions tp = InterceptorHelper.readTokenPermissions(request);
                 InterceptorHelper.storeTokenPermissionsInRequest(tp, request);
                 Map<String, Object> loggedData = new HashMap<>();
-                loggedData.put("Feature flag ENABLE_TOKEN_PERMISSION_AUTH", enableTokenPermissionAuth);
                 LOGGER.debugRequest(request, "Create TokenPermissions and store it in request", loggedData);
                 return tp;
             } catch (InvalidTokenPermissionException e) {
