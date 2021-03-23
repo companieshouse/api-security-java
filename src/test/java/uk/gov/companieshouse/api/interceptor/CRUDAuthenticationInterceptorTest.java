@@ -38,7 +38,7 @@ import uk.gov.companieshouse.api.util.security.TokenPermissionsImpl;
 
 @ExtendWith(MockitoExtension.class)
 @TestInstance(Lifecycle.PER_CLASS)
-public class CRUDAuthenticationInterceptorTest {
+class CRUDAuthenticationInterceptorTest {
     private static final Object HANDLER = null;
 
     private final Permission.Key permissionKey = Permission.Key.USER_PROFILE;

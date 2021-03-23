@@ -40,7 +40,7 @@ class TokenPermissionsInterceptorTest {
 
     @Test
     @DisplayName("Test that the preHandle method sets a TokenPermissions object in the request")
-    public void preHandle() throws Exception {
+    void preHandle() throws Exception {
         doReturn(tokenPermissions).when(interceptor).readTokenPermissions(request);
 
         assertTrue(interceptor.preHandle(request, response, HANDLER));
@@ -50,7 +50,7 @@ class TokenPermissionsInterceptorTest {
 
     @Test
     @DisplayName("Test that the preHandle method throws an exception when the token permission string is invalid")
-    public void preHandleThrowsException() throws Exception {
+    void preHandleThrowsException() throws Exception {
         doThrow(new InvalidTokenPermissionException("invalid")).when(interceptor).readTokenPermissions(request);
 
         assertThrows(InvalidTokenPermissionException.class, () -> interceptor.preHandle(request, response, HANDLER));
@@ -58,7 +58,7 @@ class TokenPermissionsInterceptorTest {
 
     @Test
     @DisplayName("Test that the postHandle method removes the TokenPermissions object from the request")
-    public void postHandle() throws Exception {
+    void postHandle() throws Exception {
 
         interceptor.postHandle(request, response, HANDLER, null);
 
