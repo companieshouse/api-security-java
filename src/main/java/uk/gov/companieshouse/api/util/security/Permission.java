@@ -58,7 +58,11 @@ public class Permission {
         /**
          * Key for promise to file permissions
          */
-        PROMISE_TO_FILE("company_promise_to_file");
+        PROMISE_TO_FILE("company_promise_to_file"),
+        /**
+         * Key for psc discrepancy reports permissions
+         */
+        USER_PSC_DISCREPANCY_REPORT("user_psc_discrepancy_report");
 
         private String stringValue;
 
