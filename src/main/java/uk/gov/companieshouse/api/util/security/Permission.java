@@ -62,7 +62,7 @@ public class Permission {
         /**
          * Key for psc discrepancy reports permissions
          */
-        PSC_DISCREPANCY_REPORT("psc_discrepancy_report");
+        USER_PSC_DISCREPANCY_REPORT("user_psc_discrepancy_report");
 
         private String stringValue;
 
