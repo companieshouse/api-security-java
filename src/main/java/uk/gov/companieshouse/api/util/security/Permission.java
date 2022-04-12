@@ -66,7 +66,11 @@ public class Permission {
         /**
          * Key for confirmation statement permissions
          */
-        COMPANY_CONFIRMATION_STATEMENT("company_confirmation_statement");
+        COMPANY_CONFIRMATION_STATEMENT("company_confirmation_statement"),
+        /**
+         * Key for overseas entity permissions
+         */
+        COMPANY_OVERSEAS_ENTITIES("company_overseas_entities");
 
         private String stringValue;
 
