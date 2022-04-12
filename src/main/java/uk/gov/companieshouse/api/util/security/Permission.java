@@ -70,7 +70,7 @@ public class Permission {
         /**
          * Key for overseas entity permissions
          */
-        COMPANY_OVERSEAS_ENTITIES("company_overseas_entities");
+        COMPANY_INCORPORATION("company_incorporation");
 
         private String stringValue;
 
