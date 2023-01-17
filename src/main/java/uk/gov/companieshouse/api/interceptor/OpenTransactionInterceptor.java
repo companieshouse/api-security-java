@@ -1,26 +1,27 @@
 package uk.gov.companieshouse.api.interceptor;
-import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
+
+import java.util.HashMap;
+import java.util.Map;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import org.springframework.web.servlet.HandlerInterceptor;
 import uk.gov.companieshouse.api.AttributeName;
 import uk.gov.companieshouse.api.model.transaction.Transaction;
 import uk.gov.companieshouse.api.model.transaction.TransactionStatus;
 import uk.gov.companieshouse.logging.Logger;
 import uk.gov.companieshouse.logging.LoggerFactory;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.util.HashMap;
-import java.util.Map;
 
-public class OpenTransactionInterceptor extends HandlerInterceptorAdapter {
+public class OpenTransactionInterceptor implements HandlerInterceptor {
 
-    private final Logger LOGGER;
+    private final Logger logger;
 
 
     public OpenTransactionInterceptor() {
-        LOGGER = LoggerFactory.getLogger(String.valueOf(OpenTransactionInterceptor.class));
+        logger = LoggerFactory.getLogger(String.valueOf(OpenTransactionInterceptor.class));
     }
 
     public OpenTransactionInterceptor(String loggingNamespace) {
-        LOGGER = LoggerFactory.getLogger(loggingNamespace);
+        logger = LoggerFactory.getLogger(loggingNamespace);
     }
     /**
      * Pre handle method to validate the request before it reaches the controller by checking if the
@@ -38,7 +39,7 @@ public class OpenTransactionInterceptor extends HandlerInterceptorAdapter {
             final Map<String, Object> debugMap = new HashMap<>();
             debugMap.put("request_method", request.getMethod());
 
-            LOGGER.errorRequest(request, "OpenTransactionInterceptor error: no open transaction available", debugMap);
+            logger.errorRequest(request, "OpenTransactionInterceptor error: no open transaction available", debugMap);
             response.setStatus(HttpServletResponse.SC_FORBIDDEN);
             return false;
         }

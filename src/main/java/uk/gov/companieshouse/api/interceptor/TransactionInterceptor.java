@@ -8,8 +8,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.HandlerMapping;
-import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import uk.gov.companieshouse.api.ApiClient;
 import uk.gov.companieshouse.api.AttributeName;
 import uk.gov.companieshouse.api.error.ApiErrorResponseException;
@@ -20,19 +20,19 @@ import uk.gov.companieshouse.logging.Logger;
 import uk.gov.companieshouse.logging.LoggerFactory;
 import uk.gov.companieshouse.sdk.manager.ApiSdkManager;
 
-public class TransactionInterceptor extends HandlerInterceptorAdapter {
+public class TransactionInterceptor implements HandlerInterceptor {
 
-    private final Logger LOGGER;
+    private final Logger logger;
 
     @Autowired
     private ApiClientService apiClientService;
 
     public TransactionInterceptor() {
-        LOGGER = LoggerFactory.getLogger(String.valueOf(TransactionInterceptor.class));
+        logger = LoggerFactory.getLogger(String.valueOf(TransactionInterceptor.class));
     }
 
     public TransactionInterceptor(String loggingNamespace) {
-        LOGGER = LoggerFactory.getLogger(loggingNamespace);
+        logger = LoggerFactory.getLogger(loggingNamespace);
     }
 
     /**
@@ -66,19 +66,19 @@ public class TransactionInterceptor extends HandlerInterceptorAdapter {
 
         } catch (HttpClientErrorException e) {
 
-            LOGGER.errorRequest(request, e, debugMap);
+            logger.errorRequest(request, e, debugMap);
             response.setStatus(e.getStatusCode().value());
             return false;
 
         } catch (ApiErrorResponseException e) {
 
-            LOGGER.errorRequest(request, e, debugMap);
+            logger.errorRequest(request, e, debugMap);
             response.setStatus(e.getStatusCode());
             return false;
 
         } catch (URIValidationException | IOException e) {
 
-            LOGGER.errorRequest(request, e, debugMap);
+            logger.errorRequest(request, e, debugMap);
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
             return false;
         }
