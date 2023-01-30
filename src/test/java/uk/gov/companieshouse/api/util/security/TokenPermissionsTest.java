@@ -40,42 +40,69 @@ class TokenPermissionsTest {
     }
 
     @Test
-    void hasPermissionKeysAndValues() throws InvalidTokenPermissionException {
+    void hasCompanyNumberPermissionKeysAndValues() throws InvalidTokenPermissionException {
         setupPermissionHeader(AUTHORISED_TOKEN_PERMISSIONS);
-
         assertTrue(permissions.hasPermission(Permission.Key.COMPANY_NUMBER, "00001234"));
         assertFalse(permissions.hasPermission(Permission.Key.COMPANY_NUMBER, "43210000"));
+    }
 
+    @Test
+    void hasUserProfilePermissionKeysAndValues() throws InvalidTokenPermissionException {
+        setupPermissionHeader(AUTHORISED_TOKEN_PERMISSIONS);
         assertFalse(permissions.hasPermission(Permission.Key.USER_PROFILE, Permission.Value.CREATE));
         assertTrue(permissions.hasPermission(Permission.Key.USER_PROFILE, Permission.Value.READ));
         assertFalse(permissions.hasPermission(Permission.Key.USER_PROFILE, Permission.Value.UPDATE));
         assertFalse(permissions.hasPermission(Permission.Key.USER_PROFILE, Permission.Value.DELETE));
+    }
 
+    @Test
+    void hasUserTransactionsPermissionKeysAndValues() throws InvalidTokenPermissionException {
+        setupPermissionHeader(AUTHORISED_TOKEN_PERMISSIONS);
         assertTrue(permissions.hasPermission(Permission.Key.USER_TRANSACTIONS, Permission.Value.CREATE));
         assertTrue(permissions.hasPermission(Permission.Key.USER_TRANSACTIONS, Permission.Value.READ));
         assertTrue(permissions.hasPermission(Permission.Key.USER_TRANSACTIONS, Permission.Value.UPDATE));
         assertFalse(permissions.hasPermission(Permission.Key.USER_TRANSACTIONS, Permission.Value.DELETE));
+    }
 
+    @Test
+    void hasCompanyAuthCodePermissionKeysAndValues() throws InvalidTokenPermissionException {
+        setupPermissionHeader(AUTHORISED_TOKEN_PERMISSIONS);
         assertFalse(permissions.hasPermission(Permission.Key.COMPANY_AUTH_CODE, Permission.Value.CREATE));
         assertTrue(permissions.hasPermission(Permission.Key.COMPANY_AUTH_CODE, Permission.Value.READ));
         assertTrue(permissions.hasPermission(Permission.Key.COMPANY_AUTH_CODE, Permission.Value.UPDATE));
         assertTrue(permissions.hasPermission(Permission.Key.COMPANY_AUTH_CODE, Permission.Value.DELETE));
+    }
 
+    @Test
+    void hasCompanyStatusPermissionKeysAndValues() throws InvalidTokenPermissionException {
+        setupPermissionHeader(AUTHORISED_TOKEN_PERMISSIONS);
         assertFalse(permissions.hasPermission(Permission.Key.COMPANY_STATUS, Permission.Value.CREATE));
         assertTrue(permissions.hasPermission(Permission.Key.COMPANY_STATUS, Permission.Value.READ));
         assertTrue(permissions.hasPermission(Permission.Key.COMPANY_STATUS, Permission.Value.UPDATE));
         assertTrue(permissions.hasPermission(Permission.Key.COMPANY_STATUS, Permission.Value.DELETE));
+    }
 
+    @Test
+    void hasCompanyTransactionsPermissionKeysAndValues() throws InvalidTokenPermissionException {
+        setupPermissionHeader(AUTHORISED_TOKEN_PERMISSIONS);
         assertFalse(permissions.hasPermission(Permission.Key.COMPANY_TRANSACTIONS, Permission.Value.CREATE));
         assertTrue(permissions.hasPermission(Permission.Key.COMPANY_TRANSACTIONS, Permission.Value.READ));
         assertFalse(permissions.hasPermission(Permission.Key.COMPANY_TRANSACTIONS, Permission.Value.UPDATE));
         assertFalse(permissions.hasPermission(Permission.Key.COMPANY_TRANSACTIONS, Permission.Value.DELETE));
+    }
 
+    @Test
+    void hasPromiseToFilesPermissionKeysAndValues() throws InvalidTokenPermissionException {
+        setupPermissionHeader(AUTHORISED_TOKEN_PERMISSIONS);
         assertFalse(permissions.hasPermission(Permission.Key.PROMISE_TO_FILE, Permission.Value.CREATE));
         assertFalse(permissions.hasPermission(Permission.Key.PROMISE_TO_FILE, Permission.Value.READ));
         assertTrue(permissions.hasPermission(Permission.Key.PROMISE_TO_FILE, Permission.Value.UPDATE));
         assertFalse(permissions.hasPermission(Permission.Key.PROMISE_TO_FILE, Permission.Value.DELETE));
+    }
 
+    @Test
+    void hasCompanyOfficersPermissionKeysAndValues() throws InvalidTokenPermissionException {
+        setupPermissionHeader(AUTHORISED_TOKEN_PERMISSIONS);
         assertTrue(permissions.hasPermission(Permission.Key.COMPANY_OFFICERS, Value.READ_PROTECTED));
         assertTrue(permissions.hasPermission(Permission.Key.COMPANY_OFFICERS, Permission.Value.DELETE));
         assertFalse(permissions.hasPermission(Permission.Key.COMPANY_OFFICERS, Permission.Value.READ));
