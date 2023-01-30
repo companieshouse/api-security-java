@@ -70,7 +70,11 @@ public class Permission {
         /**
          * Key for overseas entity permissions
          */
-        COMPANY_INCORPORATION("company_incorporation");
+        COMPANY_INCORPORATION("company_incorporation"),
+        /**
+         * Key for company officers permissions
+         */
+        COMPANY_OFFICERS("company_officers");
 
         private String stringValue;
 
@@ -93,6 +97,10 @@ public class Permission {
          * Value for resource reading permissions
          */
         public static final String READ = "read";
+        /**
+         * Value for resource accessing protected data
+         */
+        public static final String READ_PROTECTED = "readprotected";
         /**
          * Value for resource updating permissions
          */
