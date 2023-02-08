@@ -48,6 +48,7 @@ class MappablePermissionsInterceptorTest {
             .mapAllOf(HttpMethod.PUT.toString(), Permission.Value.UPDATE)
             .mapAllOf(HttpMethod.PATCH.toString(), Permission.Value.UPDATE)
             .mapAllOf(HttpMethod.POST.toString(), Permission.Value.CREATE, Permission.Value.READ)
+            .mapNone("NONE")
             .build();
 
 
@@ -89,8 +90,8 @@ class MappablePermissionsInterceptorTest {
     }
 
     @Test
-    @DisplayName("preHandle when no required TokenPermission are present in request")
-    void preHandleMissingTokenSinglePermission() {
+    @DisplayName("preHandle when none of required TokenPermission are present in request")
+    void preHandleSinglePermissionNotRequested() {
         final String permissionsHeader = "company_number=00001234 " + USER_PROFILE_KEY + "=delete";
 
         when(request.getHeader("ERIC-Authorised-Token-Permissions")).thenReturn(permissionsHeader);
@@ -108,8 +109,26 @@ class MappablePermissionsInterceptorTest {
     }
 
     @Test
+    @DisplayName("preHandle when no permissions are required")
+    void preHandleNoPermissionsRequired() {
+        final String permissionsHeader = "company_number=00001234 " + USER_PROFILE_KEY + "=delete";
+
+        when(request.getHeader("ERIC-Authorised-Token-Permissions")).thenReturn(permissionsHeader);
+        when(request.getMethod()).thenReturn("NONE");
+
+        assertThat(testInterceptor.preHandle(request, response, HANDLER), is(true));
+
+        verifyNoInteractions(response);
+        verify(request).setAttribute(eq("token_permissions"), tokenPermissionsCaptor.capture());
+
+        final TokenPermissions tokenPermissions = tokenPermissionsCaptor.getValue();
+
+        assertThat(tokenPermissions, isA(TokenPermissionsImpl.class));
+    }
+
+    @Test
     @DisplayName("preHandle when all required TokenPermission are present in request")
-    void preHandleMissingTokenMultiplePermission() {
+    void preHandleAllPermissionsRequested() {
         final String permissionsHeader =
                 "company_number=00001234 " + USER_PROFILE_KEY + "=create,read";
 
