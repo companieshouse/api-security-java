@@ -89,9 +89,9 @@ class MappablePermissionsInterceptorTest {
     }
 
     @Test
-    @DisplayName("preHandle when all required TokenPermission not present in request")
+    @DisplayName("preHandle when no required TokenPermission are present in request")
     void preHandleMissingTokenSinglePermission() {
-        final String permissionsHeader = "company_number=00001234 " + USER_PROFILE_KEY + "=create";
+        final String permissionsHeader = "company_number=00001234 " + USER_PROFILE_KEY + "=delete";
 
         when(request.getHeader("ERIC-Authorised-Token-Permissions")).thenReturn(permissionsHeader);
         when(request.getMethod()).thenReturn("POST");
@@ -108,7 +108,7 @@ class MappablePermissionsInterceptorTest {
     }
 
     @Test
-    @DisplayName("preHandle when multiple required TokenPermission are all present in request")
+    @DisplayName("preHandle when all required TokenPermission are present in request")
     void preHandleMissingTokenMultiplePermission() {
         final String permissionsHeader =
                 "company_number=00001234 " + USER_PROFILE_KEY + "=create,read";
@@ -135,9 +135,9 @@ class MappablePermissionsInterceptorTest {
 
         for (int i = 0; i < requiredPermissions.length; i++) {
             final String permission = requiredPermissions[i];
-            // To test short-circuit evaluation, set only last to isValid, all others to TRUE
+            // To test short-circuit evaluation, set only last to isValid, all others to FALSE
             when(tokenPermissions.hasPermission(USER_PROFILE_KEY, permission)).thenReturn(
-                    i != requiredPermissions.length - 1 || isValid);
+                    i == requiredPermissions.length - 1 && isValid);
         }
 
         assertThat(testInterceptor.preHandle(request, response, HANDLER), is(isValid));

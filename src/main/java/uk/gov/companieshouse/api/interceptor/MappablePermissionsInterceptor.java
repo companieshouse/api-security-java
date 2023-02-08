@@ -23,8 +23,9 @@ import uk.gov.companieshouse.logging.LoggerFactory;
 /**
  * Checks the request contains the relevant token permission value based on the
  * HTTP method.
- * It will try to find a {@link TokenPermissions} object in the
- * request or create one and store it in the request if not
+ * It will try to find any one of the required permissions are present in the
+ * {@link TokenPermissions} object in the request. If not, it will create that object and store
+ * it in the request.
  */
 public class MappablePermissionsInterceptor implements HandlerInterceptor {
 
@@ -40,7 +41,7 @@ public class MappablePermissionsInterceptor implements HandlerInterceptor {
      * @param permissionKey      The expected permission key
      * @param permissionsMapping The mapping from HTTP method to allowed Permission.Value's
      *                           String constant.
-     * @param ignoredHttpMethods An optional array of http methods for which the interceptor
+     * @param ignoredHttpMethods An optional array of HTTP methods for which the interceptor
      *                           won't run
      */
     public MappablePermissionsInterceptor(final Permission.Key permissionKey,
@@ -55,7 +56,7 @@ public class MappablePermissionsInterceptor implements HandlerInterceptor {
      *                             should be applied to these routes to cover specific logic when
      *                             this is true.
      * @param permissionsMapping   The mapping from HTTP method to allowed permissions.
-     * @param ignoredHttpMethods   An optional array of http methods for which the interceptor
+     * @param ignoredHttpMethods   An optional array of HTTP methods for which the interceptor
      *                             won't run
      */
     public MappablePermissionsInterceptor(final Permission.Key permissionKey,
@@ -76,8 +77,8 @@ public class MappablePermissionsInterceptor implements HandlerInterceptor {
 
         final TokenPermissions tokenPermissions = getTokenPermissions(request);
         final Set<String> expected = permissionsMapping.apply(request.getMethod());
-        final boolean authorised =
-                expected.stream().allMatch(p -> tokenPermissions.hasPermission(permissionKey, p));
+        final boolean authorised = expected.isEmpty() || expected.stream()
+                .anyMatch(p -> tokenPermissions.hasPermission(permissionKey, p));
 
         if (!authorised) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
