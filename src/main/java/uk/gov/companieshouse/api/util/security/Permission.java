@@ -74,11 +74,15 @@ public class Permission {
         /**
          * Key for company officers permissions
          */
-        COMPANY_OFFICERS("company_officers");
+        COMPANY_OFFICERS("company_officers"),
+        /**
+         * Key for company PSC permissions
+         */
+        COMPANY_PSCS("company_pscs");
 
-        private String stringValue;
+        private final String stringValue;
 
-        private Key(String permissionKey) {
+        Key(final String permissionKey) {
             stringValue = permissionKey;
         }
 
