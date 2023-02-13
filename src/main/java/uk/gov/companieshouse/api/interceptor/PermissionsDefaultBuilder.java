@@ -1,7 +1,7 @@
 package uk.gov.companieshouse.api.interceptor;
 
 public interface PermissionsDefaultBuilder {
-    PermissionsMapping.PermissionsMappingBuilder defaultAllOf(final String... values);
+    PermissionsMapping.PermissionsMappingBuilder defaultRequireAnyOf(final String... values);
 
-    PermissionsMapping.PermissionsMappingBuilder defaultNone();
+    PermissionsMapping.PermissionsMappingBuilder defaultRequireNone();
 }

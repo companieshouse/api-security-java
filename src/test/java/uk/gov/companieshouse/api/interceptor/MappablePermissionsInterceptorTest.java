@@ -44,11 +44,12 @@ class MappablePermissionsInterceptorTest {
     private static final Object HANDLER = new Object();
     private static final Permission.Key USER_PROFILE_KEY = Permission.Key.USER_PROFILE;
     private static final PermissionsMapping EXPECTED_MAPPING = PermissionsMapping.builder()
-            .defaultAllOf(Permission.Value.READ)
-            .mapAllOf(HttpMethod.PUT.toString(), Permission.Value.UPDATE)
-            .mapAllOf(HttpMethod.PATCH.toString(), Permission.Value.UPDATE)
-            .mapAllOf(HttpMethod.POST.toString(), Permission.Value.CREATE, Permission.Value.READ)
-            .mapNone("NONE")
+            .defaultRequireAnyOf(Permission.Value.READ)
+            .mappedRequireAnyOf(HttpMethod.PUT.toString(), Permission.Value.UPDATE)
+            .mappedRequireAnyOf(HttpMethod.PATCH.toString(), Permission.Value.UPDATE)
+            .mappedRequireAnyOf(HttpMethod.POST.toString(), Permission.Value.CREATE,
+                    Permission.Value.READ)
+            .mappedRequireNone("NONE")
             .build();
 
 
@@ -233,10 +234,11 @@ class MappablePermissionsInterceptorTest {
     @Test
     @DisplayName("preHandle rejects if ignoreAPIKeyRequests flag set for non-API key requests")
     void notIgnoreNonAPIKeyRequestsGetRequest() {
-        final MappedCRUDAuthenticationInterceptor ignoringApiInterceptor =
-                new MappedCRUDAuthenticationInterceptor(USER_PROFILE_KEY, true);
-        final MappedCRUDAuthenticationInterceptor spyInterceptor =
-                Mockito.spy(ignoringApiInterceptor);
+        final PermissionsMapping ignoreAll =
+                PermissionsMapping.builder().defaultRequireAnyOf("create")
+                        .build();
+        final MappablePermissionsInterceptor spyInterceptor =
+                Mockito.spy(new MappablePermissionsInterceptor(USER_PROFILE_KEY, true, ignoreAll));
 
         doReturn(Optional.of(tokenPermissions)).when(spyInterceptor)
                 .getTokenPermissionsFromRequest(request);

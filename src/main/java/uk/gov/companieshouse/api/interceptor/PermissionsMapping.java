@@ -17,15 +17,15 @@ import org.apache.commons.collections4.multimap.HashSetValuedHashMap;
  * <ul>
  *   <li>A default mapping is <b>required</b>. Start with:</li>
  *   <ul>
- *     <li>{@code defaultAllOf(String ...)} to map any key non-specific keys to a non-empty set
+ *     <li>{@code defaultRequireAnyOf(String ...)} to map any non-specific keys to a non-empty set
  *     of values, or</li>
- *     <li>{@code defaultNone()} to map any non-specific keys to an empty values set.
+ *     <li>{@code defaultRequireNone()} to map any non-specific keys to an empty values set.
  *   </ul>
  *   <li>and then explicit mappings are <b>optional</b>:</li>
  *   <ul>
- *       <li>Use {@code mapAllOf(String, String ...)} to set a mapping for the given key to a
+ *       <li>Use {@code mappedRequireAnyOf(String, String ...)} to set a mapping for the given key to a
  *       non-empty set of values.</li>
- *       <li>Use {@code mapNone()} to set a mapping for the given key to an empty values set.</li>
+ *       <li>Use {@code mappedRequireNone()} to set a mapping for the given key to an empty values set.</li>
  *   </ul>
  * </ul>
  * <p>
@@ -35,13 +35,13 @@ import org.apache.commons.collections4.multimap.HashSetValuedHashMap;
  *       <ul>
  *           <li>(default) &rarr; ["read"]</li>
  *       </ul>
- *         {@code PermissionMapping.builder().defaultAllOf("read").build()}</li>
+ *         {@code PermissionMapping.builder().defaultRequireAnyOf("read").build()}</li>
  *     <li>Create a mapping
  *       <ul>
  *           <li>(default) &rarr; [ ]</li>
  *           <li>"POST" &rarr; [ "readprotected", "create" ]</li>
  *       </ul>
- *         {@code PermissionMapping.builder().defaultNone().mapAllOf("POST",
+ *         {@code PermissionMapping.builder().defaultRequireNone().mappedRequireAnyOf("POST",
  *     "readprotected", "create").build()}</li>
  *     <li>Create a mapping
  *       <ul>
@@ -49,8 +49,8 @@ import org.apache.commons.collections4.multimap.HashSetValuedHashMap;
  *           <li>"GET" &rarr; [ ]</li>
  *           <li>"POST" &rarr; [ "readprotected", "create" ]</li>
  *       </ul>
- *         {@code PermissionMapping.builder().defaultAllOf("read").mapAllOf("POST",
- *     "readprotected", "create").mapNone("GET").build()}</li>
+ *         {@code PermissionMapping.builder().defaultRequireAnyOf("read").mappedRequireAnyOf("POST",
+ *     "readprotected", "create").mappedRequireNone("GET").build()}</li>
  * </ol>
  */
 public class PermissionsMapping implements PermissionsAllowable {
@@ -91,27 +91,27 @@ public class PermissionsMapping implements PermissionsAllowable {
         }
 
         @Override
-        public PermissionsMappingBuilder defaultAllOf(final String... values) {
+        public PermissionsMappingBuilder defaultRequireAnyOf(final String... values) {
             buildSteps.add(
                     p -> p.permissionsMap.putAll(DEFAULT_KEY, buildImmutableNonEmptySet(values)));
             return this;
         }
 
         @Override
-        public PermissionsMappingBuilder defaultNone() {
+        public PermissionsMappingBuilder defaultRequireNone() {
             buildSteps.add(
                     p -> p.permissionsMap.putAll(DEFAULT_KEY, Collections.singleton(EMPTY_VALUE)));
             return this;
         }
 
         @Override
-        public PermissionsMappingBuilder mapAllOf(final String key, final String... values) {
+        public PermissionsMappingBuilder mappedRequireAnyOf(final String key, final String... values) {
             buildSteps.add(p -> p.permissionsMap.putAll(key, buildImmutableNonEmptySet(values)));
             return this;
         }
 
         @Override
-        public PermissionsMappingBuilder mapNone(final String key) {
+        public PermissionsMappingBuilder mappedRequireNone(final String key) {
             buildSteps.add(p -> p.permissionsMap.putAll(key, Collections.singleton(EMPTY_VALUE)));
             return this;
         }

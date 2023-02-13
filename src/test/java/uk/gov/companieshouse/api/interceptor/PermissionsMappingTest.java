@@ -16,7 +16,7 @@ class PermissionsMappingTest {
 
     @Test
     void builderWhenDefaultNone() {
-        testMapping = PermissionsMapping.builder().defaultNone()
+        testMapping = PermissionsMapping.builder().defaultRequireNone()
                 .build();
 
         assertThat(testMapping.apply("POST"), is(empty()));
@@ -26,7 +26,7 @@ class PermissionsMappingTest {
     @Test
     void builderWhenDefaultNoneAndRequiredAllOfEmpty() {
         final PermissionsMapping.PermissionsMappingBuilder builder =
-                PermissionsMapping.builder().defaultAllOf();
+                PermissionsMapping.builder().defaultRequireAnyOf();
 
         assertThrows(IllegalArgumentException.class, builder::build);
 
@@ -35,7 +35,7 @@ class PermissionsMappingTest {
     @Test
     void builderWhenDefaultContainsOnlyNull() {
         final PermissionsMapping.PermissionsMappingBuilder builder =
-                PermissionsMapping.builder().defaultAllOf((String) null);
+                PermissionsMapping.builder().defaultRequireAnyOf((String) null);
 
         assertThrows(IllegalArgumentException.class, builder::build);
 
@@ -44,7 +44,7 @@ class PermissionsMappingTest {
     @Test
     void builderWhenDefaultContainsNull() {
         final PermissionsMapping.PermissionsMappingBuilder builder =
-                PermissionsMapping.builder().defaultAllOf(null, "read");
+                PermissionsMapping.builder().defaultRequireAnyOf(null, "read");
 
         assertThrows(IllegalArgumentException.class, builder::build);
 
@@ -53,14 +53,14 @@ class PermissionsMappingTest {
     @Test
     void builderWhenDefaultNull() {
         final PermissionsMapping.PermissionsMappingBuilder builder =
-                PermissionsMapping.builder().defaultAllOf((String[]) null);
+                PermissionsMapping.builder().defaultRequireAnyOf((String[]) null);
 
         assertThrows(NullPointerException.class, builder::build);
     }
 
     @Test
     void builderWhenDefaultOnly() {
-        testMapping = PermissionsMapping.builder().defaultAllOf("readprotected", "read")
+        testMapping = PermissionsMapping.builder().defaultRequireAnyOf("readprotected", "read")
                 .build();
 
         assertThat(testMapping.apply("GET"), containsInAnyOrder("readprotected", "read"));
@@ -70,8 +70,8 @@ class PermissionsMappingTest {
     @Test
     void builderWhenDefaultAllAndRequiredAll() {
         testMapping = PermissionsMapping.builder()
-                .defaultAllOf("readprotected", "read")
-                .mapAllOf("POST", "create")
+                .defaultRequireAnyOf("readprotected", "read")
+                .mappedRequireAnyOf("POST", "create")
                 .build();
 
         assertThat(testMapping.apply("GET"), containsInAnyOrder("readprotected", "read"));
@@ -81,8 +81,8 @@ class PermissionsMappingTest {
     @Test
     void builderWhenDefaultAllAndRequiredNone() {
         testMapping = PermissionsMapping.builder()
-                .defaultAllOf("readprotected", "read")
-                .mapNone("POST")
+                .defaultRequireAnyOf("readprotected", "read")
+                .mappedRequireNone("POST")
                 .build();
 
         assertThat(testMapping.apply("GET"), containsInAnyOrder("readprotected", "read"));
@@ -92,8 +92,8 @@ class PermissionsMappingTest {
     @Test
     void builderWhenDefaultAllAndRequiredEmpty() {
         final PermissionsMapping.PermissionsMappingBuilder builder = PermissionsMapping.builder()
-                .defaultAllOf("readprotected", "read")
-                .mapAllOf("POST");
+                .defaultRequireAnyOf("readprotected", "read")
+                .mappedRequireAnyOf("POST");
 
         assertThrows(IllegalArgumentException.class, builder::build);
     }
@@ -101,8 +101,8 @@ class PermissionsMappingTest {
     @Test
     void builderWhenDefaultAllAndRequiredNull() {
         final PermissionsMapping.PermissionsMappingBuilder builder = PermissionsMapping.builder()
-                .defaultAllOf("readprotected", "read")
-                .mapAllOf("POST", (String[]) null);
+                .defaultRequireAnyOf("readprotected", "read")
+                .mappedRequireAnyOf("POST", (String[]) null);
 
         assertThrows(NullPointerException.class, builder::build);
     }
@@ -110,8 +110,8 @@ class PermissionsMappingTest {
     @Test
     void builderWhenDefaultAllAndRequiredContainsOnlyNull() {
         final PermissionsMapping.PermissionsMappingBuilder builder = PermissionsMapping.builder()
-                .defaultAllOf("readprotected", "read")
-                .mapAllOf("POST", (String) null);
+                .defaultRequireAnyOf("readprotected", "read")
+                .mappedRequireAnyOf("POST", (String) null);
 
         assertThrows(IllegalArgumentException.class, builder::build);
     }
@@ -120,8 +120,8 @@ class PermissionsMappingTest {
     void builderWhenDefaultAllAndRequiredContainsNull() {
         final PermissionsMapping.PermissionsMappingBuilder builder =
                 PermissionsMapping.builder()
-                        .defaultAllOf("readprotected", "read")
-                        .mapAllOf("POST", null, "read");
+                        .defaultRequireAnyOf("readprotected", "read")
+                        .mappedRequireAnyOf("POST", null, "read");
 
         assertThrows(IllegalArgumentException.class, builder::build);
     }

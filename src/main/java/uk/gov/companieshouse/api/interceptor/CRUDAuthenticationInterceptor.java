@@ -20,17 +20,11 @@ import uk.gov.companieshouse.logging.Logger;
 import uk.gov.companieshouse.logging.LoggerFactory;
 
 /**
- * @deprecated
- * <p>
- * As of release 0.4, replaced by {@link MappedCRUDAuthenticationInterceptor}.
- * </p>
- *
  * Checks the request contains the relevant token permission value based on the
  * http method 
  * It will try to find a {@link TokenPermissions} object in the
  * request or create one and store it in the request if not
  */
-@Deprecated
 public class CRUDAuthenticationInterceptor extends HandlerInterceptorAdapter {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(String.valueOf(CRUDAuthenticationInterceptor.class));
