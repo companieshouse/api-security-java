@@ -5,11 +5,11 @@ import uk.gov.companieshouse.api.util.security.Permission;
 import uk.gov.companieshouse.api.util.security.TokenPermissions;
 
 /**
- * Replacement for {@link CRUDAuthenticationInterceptor} implemented with
- * {@link MappablePermissionsInterceptor}.
- * Checks the request contains the relevant token permission values based on the HTTP method.
+ * <p>Alternative to {@link CRUDAuthenticationInterceptor} implemented with
+ * {@link MappablePermissionsInterceptor}.</p>
+ * <p>Checks the request contains the relevant token permission values based on the HTTP method.
  * It will try to find a {@link TokenPermissions} object in the request or create one and store
- * it in the request if not.
+ * it in the request if not.</p>
  */
 public class MappedCRUDAuthenticationInterceptor extends MappablePermissionsInterceptor {
     private static final PermissionsMapping CRUD_MAPPING = PermissionsMapping.builder()
@@ -17,6 +17,7 @@ public class MappedCRUDAuthenticationInterceptor extends MappablePermissionsInte
             .mapAllOf(HttpMethod.PUT.toString(), Permission.Value.UPDATE)
             .mapAllOf(HttpMethod.PATCH.toString(), Permission.Value.UPDATE)
             .mapAllOf(HttpMethod.POST.toString(), Permission.Value.CREATE)
+            .mapAllOf(HttpMethod.DELETE.toString(), Permission.Value.DELETE)
             .build();
 
     /**

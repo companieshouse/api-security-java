@@ -38,6 +38,7 @@ class MappedCRUDAuthenticationInterceptorTest {
             .mapAllOf(HttpMethod.PUT.toString(), Permission.Value.UPDATE)
             .mapAllOf(HttpMethod.PATCH.toString(), Permission.Value.UPDATE)
             .mapAllOf(HttpMethod.POST.toString(), Permission.Value.CREATE)
+            .mapAllOf(HttpMethod.DELETE.toString(), Permission.Value.DELETE)
             .build();
 
     @Mock
