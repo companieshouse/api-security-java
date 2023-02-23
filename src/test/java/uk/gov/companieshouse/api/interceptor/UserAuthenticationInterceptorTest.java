@@ -53,6 +53,16 @@ class UserAuthenticationInterceptorTest {
     }
 
     @Test
+    void internalMethodCallsSuperWrongAuthType() throws IOException {
+        when(request.getMethod()).thenReturn("PUT");
+        when(request.getHeader(EricConstants.ERIC_IDENTITY)).thenReturn("asdc");
+        when(request.getHeader(EricConstants.ERIC_IDENTITY_TYPE)).thenReturn("oauth2");
+        lenient().when(request.getHeader(EricConstants.ERIC_AUTHORISED_KEY_ROLES)).thenReturn("*");
+
+        assertFalse(userAuthenticationInterceptor.preHandle(request, response, userAuthenticationInterceptor));
+    }
+
+    @Test
     void internalMethodCallsSuperAndHasInternalRole() throws IOException {
         when(request.getMethod()).thenReturn("PUT");
         when(request.getHeader(EricConstants.ERIC_IDENTITY)).thenReturn("asdc");
