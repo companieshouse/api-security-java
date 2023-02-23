@@ -2,6 +2,9 @@ package uk.gov.companieshouse.api.interceptor;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
@@ -75,6 +78,14 @@ class UserAuthenticationInterceptorTest {
         when(request.getHeader(EricConstants.ERIC_IDENTITY_TYPE)).thenReturn("oauth2");
 
         assertTrue(userAuthenticationInterceptor.preHandle(request, response, userAuthenticationInterceptor));
+    }
+
+    @Test
+    void externalMethodInListAuthNoIdentity() throws IOException {
+        lenient().when(request.getMethod()).thenReturn("GET");
+        lenient().when(request.getHeader(EricConstants.ERIC_IDENTITY_TYPE)).thenReturn("key");
+
+        assertFalse(userAuthenticationInterceptor.preHandle(request, response, userAuthenticationInterceptor));
     }
 
     @Test
