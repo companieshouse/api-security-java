@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import uk.gov.companieshouse.api.util.security.AuthorisationUtil;
@@ -16,6 +17,7 @@ import uk.gov.companieshouse.api.util.security.SecurityConstants;
 import uk.gov.companieshouse.logging.Logger;
 import uk.gov.companieshouse.logging.LoggerFactory;
 
+@Component
 public class UserAuthenticationInterceptor extends HandlerInterceptorAdapter {
 
     private InternalUserInterceptor internalUserInterceptor;
