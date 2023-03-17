@@ -61,4 +61,3 @@ public class InternalUserInterceptor extends HandlerInterceptorAdapter {
     }
 
 }
-
