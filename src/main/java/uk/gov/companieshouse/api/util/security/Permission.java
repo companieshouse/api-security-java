@@ -78,7 +78,12 @@ public class Permission {
         /**
          * Key for company PSC permissions
          */
-        COMPANY_PSCS("company_pscs");
+        COMPANY_PSCS("company_pscs"),
+
+        /**
+         * Key for OE Annual Updates (ROE Update)
+         */
+        COMPANY_OE_UPDATE("company_oe_annual_update");
 
         private final String stringValue;
 
