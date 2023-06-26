@@ -79,6 +79,11 @@ public class Permission {
          * Key for company PSC permissions
          */
         COMPANY_PSCS("company_pscs"),
+        /**
+         * Key for company REA update permissions
+         */
+        COMPANY_REA_UPDATE("company_rea");
+        COMPANY_PSCS("company_pscs"),
 
         /**
          * Key for OE Annual Updates (ROE Update)
