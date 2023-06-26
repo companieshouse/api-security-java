@@ -83,7 +83,7 @@ public class Permission {
         /**
          * Key for OE Annual Updates (ROE Update)
          */
-        COMPANY_OE_UPDATE("company_oe_annual_update");
+        COMPANY_OE_ANNUAL_UPDATE("company_oe_annual_update");
 
         private final String stringValue;
 

@@ -112,8 +112,8 @@ class TokenPermissionsTest {
     @Test
     void hasOEUpdatePermissionKeysAndValues() throws InvalidTokenPermissionException {
         setupPermissionHeader(AUTHORISED_TOKEN_PERMISSIONS);
-        assertTrue(permissions.hasPermission(Permission.Key.COMPANY_OE_UPDATE, Value.CREATE));
-        assertFalse(permissions.hasPermission(Permission.Key.COMPANY_OE_UPDATE, Permission.Value.READ));
+        assertTrue(permissions.hasPermission(Permission.Key.COMPANY_OE_ANNUAL_UPDATE, Value.CREATE));
+        assertFalse(permissions.hasPermission(Permission.Key.COMPANY_OE_ANNUAL_UPDATE, Permission.Value.READ));
     }
 
     @Test
