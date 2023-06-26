@@ -78,7 +78,11 @@ public class Permission {
         /**
          * Key for company PSC permissions
          */
-        COMPANY_PSCS("company_pscs");
+        COMPANY_PSCS("company_pscs"),
+        /**
+         * Key for company REA update permissions
+         */
+        COMPANY_REA_UPDATE("company_rea");
 
         private final String stringValue;
 
