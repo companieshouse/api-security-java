@@ -82,7 +82,12 @@ public class Permission {
         /**
          * Key for company REA update permissions
          */
-        COMPANY_REA_UPDATE("company_rea");
+        COMPANY_REA_UPDATE("company_rea"),
+
+        /**
+         * Key for OE Annual Updates (ROE Update)
+         */
+        COMPANY_OE_ANNUAL_UPDATE("company_oe_annual_update");
 
         private final String stringValue;
 

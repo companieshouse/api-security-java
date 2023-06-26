@@ -13,7 +13,7 @@ import uk.gov.companieshouse.api.util.security.Permission.Value;
 
 class TokenPermissionsTest {
 
-    private static final String AUTHORISED_TOKEN_PERMISSIONS = "company_number=00001234 company_transactions=read user_profile=read user_transactions=read,create,update company_auth_code=read,update,delete company_status=read,update,delete company_promise_to_file=update company_officers=delete,readprotected,update,create";
+    private static final String AUTHORISED_TOKEN_PERMISSIONS = "company_number=00001234 company_transactions=read user_profile=read user_transactions=read,create,update company_auth_code=read,update,delete company_status=read,update,delete company_promise_to_file=update company_officers=delete,readprotected,update,create company_oe_annual_update=create";
 
     TokenPermissionsImpl permissions;
 
@@ -107,6 +107,13 @@ class TokenPermissionsTest {
         assertFalse(permissions.hasPermission(Permission.Key.COMPANY_OFFICERS, Permission.Value.READ));
         assertTrue(permissions.hasPermission(Permission.Key.COMPANY_OFFICERS, Value.UPDATE));
         assertTrue(permissions.hasPermission(Permission.Key.COMPANY_OFFICERS, Value.CREATE));
+    }
+
+    @Test
+    void hasOEUpdatePermissionKeysAndValues() throws InvalidTokenPermissionException {
+        setupPermissionHeader(AUTHORISED_TOKEN_PERMISSIONS);
+        assertTrue(permissions.hasPermission(Permission.Key.COMPANY_OE_ANNUAL_UPDATE, Value.CREATE));
+        assertFalse(permissions.hasPermission(Permission.Key.COMPANY_OE_ANNUAL_UPDATE, Permission.Value.READ));
     }
 
     @Test
