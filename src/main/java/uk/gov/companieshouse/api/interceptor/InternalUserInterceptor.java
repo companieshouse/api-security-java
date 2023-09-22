@@ -2,12 +2,12 @@ package uk.gov.companieshouse.api.interceptor;
 
 import java.io.IOException;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Component;
-import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
+import org.springframework.web.servlet.HandlerInterceptor;
 
 import uk.gov.companieshouse.api.util.security.AuthorisationUtil;
 import uk.gov.companieshouse.api.util.security.SecurityConstants;
@@ -20,7 +20,7 @@ import uk.gov.companieshouse.logging.LoggerFactory;
  * make internal calls.
  */
 @Component
-public class InternalUserInterceptor extends HandlerInterceptorAdapter {
+public class InternalUserInterceptor implements HandlerInterceptor {
     
     private final Logger LOG;
 

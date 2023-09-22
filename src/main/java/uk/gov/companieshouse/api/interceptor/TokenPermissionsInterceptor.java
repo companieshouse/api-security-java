@@ -3,12 +3,12 @@ package uk.gov.companieshouse.api.interceptor;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
+import org.springframework.web.servlet.HandlerInterceptor;
 
 import uk.gov.companieshouse.api.util.security.InvalidTokenPermissionException;
 import uk.gov.companieshouse.api.util.security.TokenPermissions;
@@ -20,7 +20,7 @@ import uk.gov.companieshouse.logging.LoggerFactory;
  * It can then be read by using {@link AuthorisationUtil.getTokenPermissions(request)}
  */
 @Component
-public class TokenPermissionsInterceptor extends HandlerInterceptorAdapter {
+public class TokenPermissionsInterceptor implements HandlerInterceptor {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(String.valueOf(TokenPermissionsInterceptor.class));
 

@@ -1,6 +1,6 @@
 package uk.gov.companieshouse.api.util.security;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 public final class RequestUtils {
     private RequestUtils() {}

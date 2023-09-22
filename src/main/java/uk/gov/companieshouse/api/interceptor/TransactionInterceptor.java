@@ -3,13 +3,13 @@ package uk.gov.companieshouse.api.interceptor;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.servlet.HandlerMapping;
-import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
+import org.springframework.web.servlet.HandlerInterceptor;
 import uk.gov.companieshouse.api.ApiClient;
 import uk.gov.companieshouse.api.AttributeName;
 import uk.gov.companieshouse.api.error.ApiErrorResponseException;
@@ -20,7 +20,7 @@ import uk.gov.companieshouse.logging.Logger;
 import uk.gov.companieshouse.logging.LoggerFactory;
 import uk.gov.companieshouse.sdk.manager.ApiSdkManager;
 
-public class TransactionInterceptor extends HandlerInterceptorAdapter {
+public class TransactionInterceptor implements HandlerInterceptor {
 
     private final Logger LOGGER;
 

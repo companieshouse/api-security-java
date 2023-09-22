@@ -1,6 +1,6 @@
 package uk.gov.companieshouse.api.interceptor;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import uk.gov.companieshouse.api.util.security.InvalidTokenPermissionException;
 import uk.gov.companieshouse.api.util.security.SecurityConstants;
