@@ -2,7 +2,7 @@ package uk.gov.companieshouse.api.util.security;
 
 import java.util.Optional;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 public final class AuthorisationUtil {
     private AuthorisationUtil() {
