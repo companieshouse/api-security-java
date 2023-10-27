@@ -15,9 +15,10 @@
     <properties>
         <!-- Dependency Versions -->
         <maven-jar-plugin.version>2.4</maven-jar-plugin.version>
-        <api-sdk-java.version>5.0.2</api-sdk-java.version>
-        <structured-logging.version>2.0.1</structured-logging.version>
-        <api-sdk-manager-java-library.version>2.0.0</api-sdk-manager-java-library.version>
+        <api-sdk-java.version>5.0.5</api-sdk-java.version>
+        <structured-logging.version>2.0.3</structured-logging.version>
+        <!--<api-sdk-manager-java-library.version>2.0.0</api-sdk-manager-java-library.version>-->
+        <api-sdk-manager-java-library.version>2.0.2</api-sdk-manager-java-library.version>
 
         <!-- Maven -->
         <maven-surefire-plugin.version>2.22.2</maven-surefire-plugin.version>
