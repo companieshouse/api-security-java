@@ -32,6 +32,10 @@ public class Permission {
          */
         USER_REQUEST_AUTH_CODE("user_request_auth_code"),
         /**
+         * Key for the user presenter account permissions
+         */
+        USER_PRESENTER("user_presenter"),
+        /**
          * Key for the detailing the company number for any company level permissions
          */
         COMPANY_NUMBER("company_number"),
