@@ -1,5 +1,7 @@
 package uk.gov.companieshouse.api.util.security;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -33,4 +35,19 @@ public final class AuthorisationUtil {
         Object value = request.getAttribute(SecurityConstants.TOKEN_PERMISSION_REQUEST_KEY);
         return Optional.ofNullable(value instanceof TokenPermissions ? (TokenPermissions) value : null);
     }
+
+    public static List<String> getAuthorisedRoles(HttpServletRequest request) {
+        return Arrays.asList(RequestUtils.getRequestHeader(request, EricConstants.ERIC_AUTHORISED_ROLES).split(" "));
+    }
+
+    public static boolean isOauth2User(final HttpServletRequest request){
+        final String identity = getAuthorisedIdentity(request);
+        final String identityType = getAuthorisedIdentityType(request);
+        
+        if (identity != null && identityType.contains("oauth2")) {
+            return true;
+        }
+        return false;
+    }
+
 }
