@@ -14,6 +14,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.mock.web.MockHttpServletRequest;
 
 @ExtendWith(MockitoExtension.class)
 class AuthorisationUtilTest {
@@ -47,4 +48,30 @@ class AuthorisationUtilTest {
 
         assertFalse(result.isPresent());
     }
+
+    @Test
+    void isOauth2UserRequiredFields(){
+        MockHttpServletRequest httpServletRequest = new MockHttpServletRequest();
+        httpServletRequest.addHeader(EricConstants.ERIC_IDENTITY, "*");
+        httpServletRequest.addHeader(EricConstants.ERIC_IDENTITY_TYPE, "oauth2");
+        
+        assertTrue(AuthorisationUtil.isOauth2User(httpServletRequest));
+    }
+
+    @Test
+    void isOauth2UserKeyIdentityType(){
+        MockHttpServletRequest httpServletRequest = new MockHttpServletRequest();
+        httpServletRequest.addHeader(EricConstants.ERIC_IDENTITY, "*");
+        httpServletRequest.addHeader(EricConstants.ERIC_IDENTITY_TYPE, "key");
+    
+        assertFalse(AuthorisationUtil.isOauth2User(httpServletRequest));
+    }   
+
+    @Test
+    void isOauth2UserIdentityTypeNotSet(){
+        MockHttpServletRequest httpServletRequest = new MockHttpServletRequest();
+        httpServletRequest.addHeader(EricConstants.ERIC_IDENTITY_TYPE, "key");
+    
+        assertFalse(AuthorisationUtil.isOauth2User(httpServletRequest));
+    }      
 }
