@@ -1,7 +1,6 @@
 package uk.gov.companieshouse.api.interceptor;
 
 import java.io.IOException;
-import java.util.HashMap;
 
 import org.springframework.web.servlet.HandlerInterceptor;
 
@@ -22,8 +21,6 @@ public class RolePermissionInterceptor implements HandlerInterceptor {
    private final Logger logger;
 
    private final String requiredRolePermission;
-
-   private final static HashMap<String,Object> EMPTY_MAP =  new HashMap<String,Object>();
     
    public RolePermissionInterceptor(final String requiredRolePermission) {         
       this.logger = LoggerFactory.getLogger(String.valueOf(RolePermissionInterceptor.class));
@@ -39,16 +36,16 @@ public class RolePermissionInterceptor implements HandlerInterceptor {
    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws IOException {
       if (AuthorisationUtil.isOauth2User(request)){
          if (AuthorisationUtil.getAuthorisedRoles(request).contains(requiredRolePermission)) {
-            logger.debugRequest(request, String.format("authorised user has the correct role: %s ", requiredRolePermission), EMPTY_MAP );
+            logger.debug(String.format("authorised user has the correct role: %s ", requiredRolePermission));
             return true;         
          } else {
-            logger.debugRequest(request, "user does not have the correct role", EMPTY_MAP);
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            logger.debug("user does not have the correct role permission");
+            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
             return false;
          }
       } else{
-         logger.debugRequest(request, "user does not have the correct role", EMPTY_MAP);
-         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+         logger.debug("Identity type provided was not oauth2");
+         response.setStatus(HttpServletResponse.SC_FORBIDDEN);
          return false;
       }
    }
