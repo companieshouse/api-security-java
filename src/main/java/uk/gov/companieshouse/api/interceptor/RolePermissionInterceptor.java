@@ -13,8 +13,9 @@ import uk.gov.companieshouse.logging.LoggerFactory;
 
 /**
  * Checks the request to see if the request contains the required role permission
- * stored in the header field `ERIC-Authorised-Roles`. Interceptor is only used 
- * for use when verifying an admin user
+ * stored in the header field `ERIC-Authorised-Roles`. 
+ * 
+ * Interceptor is only for use when verifying an admin user
  */
 public class RolePermissionInterceptor implements HandlerInterceptor {
 
@@ -36,10 +37,8 @@ public class RolePermissionInterceptor implements HandlerInterceptor {
 
    @Override
    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws IOException {
-      boolean isOauthUser = AuthorisationUtil.isOauth2User(request);
-      if (isOauthUser){
-         boolean hasRole = AuthorisationUtil.getAuthorisedRoles(request).contains(requiredRolePermission);
-         if (hasRole) {
+      if (AuthorisationUtil.isOauth2User(request)){
+         if (AuthorisationUtil.getAuthorisedRoles(request).contains(requiredRolePermission)) {
             logger.debugRequest(request, String.format("authorised user has the correct role: %s ", requiredRolePermission), EMPTY_MAP );
             return true;         
          } else {
