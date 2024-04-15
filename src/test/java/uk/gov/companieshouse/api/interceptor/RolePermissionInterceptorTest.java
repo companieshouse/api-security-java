@@ -21,7 +21,7 @@ import uk.gov.companieshouse.api.util.security.SecurityConstants;
 
 @ExtendWith(MockitoExtension.class)
 @TestInstance(Lifecycle.PER_CLASS)
-class RoleInterceptorTest {
+class RolePermissionInterceptorTest {
     
     private static final Object NO_HANDLER = null;
     
@@ -30,16 +30,16 @@ class RoleInterceptorTest {
     @Mock
     private HttpServletResponse mockResponse;
     
-    private RoleInterceptor roleInterceptor;
+    private RolePermissionInterceptor roleInterceptor;
     
     @BeforeEach
     void setup() {
-        roleInterceptor = new RoleInterceptor("/admin/search");
+        roleInterceptor = new RolePermissionInterceptor("/admin/search");
         mockRequest = new MockHttpServletRequest();
     }
 
     @Test
-    @DisplayName("Test the Handler allows a user with the correct set of permissions, roles & priviledges through")
+    @DisplayName("Test the Handler allows a user with the correct set of role permissions")
     public void testUserWithCorrectPriviledges() throws IOException {
 
         mockRequest.addHeader(EricConstants.ERIC_IDENTITY, "test data");
@@ -55,6 +55,17 @@ class RoleInterceptorTest {
         mockRequest.addHeader(EricConstants.ERIC_IDENTITY, "test data");
         mockRequest.addHeader(EricConstants.ERIC_IDENTITY_TYPE, "oauth2");
         mockRequest.addHeader(EricConstants.ERIC_AUTHORISED_ROLES, "/admin/roles /admin/user/search");
+        mockRequest.addHeader(EricConstants.ERIC_AUTHORISED_KEY_ROLES,SecurityConstants.INTERNAL_USER_ROLE);
+        assertFalse(roleInterceptor.preHandle(mockRequest, mockResponse, NO_HANDLER));
+    }
+
+    @Test
+    @DisplayName("Test the Handler stops a user without the correct identity type")
+    public void testUserWithWrongIdentityType() throws IOException {
+
+        mockRequest.addHeader(EricConstants.ERIC_IDENTITY, "test data");
+        mockRequest.addHeader(EricConstants.ERIC_IDENTITY_TYPE, "key");
+        mockRequest.addHeader(EricConstants.ERIC_AUTHORISED_ROLES, "/admin/roles /admin/search /admin/user/search");
         mockRequest.addHeader(EricConstants.ERIC_AUTHORISED_KEY_ROLES,SecurityConstants.INTERNAL_USER_ROLE);
         assertFalse(roleInterceptor.preHandle(mockRequest, mockResponse, NO_HANDLER));
     }
