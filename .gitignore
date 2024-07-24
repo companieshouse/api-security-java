@@ -10,3 +10,7 @@ target/
 .project
 .settings
 /bin/
+
+# Vim files
+*.vim
+.*.sw?
