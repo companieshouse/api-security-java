@@ -91,7 +91,32 @@ public class Permission {
         /**
          * Key for OE Annual Updates (ROE Update)
          */
-        COMPANY_OE_ANNUAL_UPDATE("company_oe_annual_update");
+        COMPANY_OE_ANNUAL_UPDATE("company_oe_annual_update"),
+
+        /**
+         * Key for Acsp the user is a member of
+         */
+        ACSP_ID("acsp_id"),
+
+        /**
+         * Key for user's permissible actions on owners
+         */
+        ACSP_MEMBERS_OWNERS("acsp_members_owners"),
+
+        /**
+         * Key for user's permissible actions on admins
+         */
+        ACSP_MEMBERS_ADMINS("acsp_members_admins"),
+
+        /**
+         * Key for user's permissible actions on standard users
+         */
+        ACSP_MEMBERS_STANDARD("acsp_members_standard"),
+
+        /**
+         * Key for user's permission to retrieve data related to an Acsp
+         */
+        ACSP_MEMBERS("acsp_members");
 
         private final String stringValue;
 
