@@ -116,7 +116,12 @@ public class Permission {
         /**
          * Key for user's permission to retrieve data related to an Acsp
          */
-        ACSP_MEMBERS("acsp_members");
+        ACSP_MEMBERS("acsp_members"),
+
+        /**
+         * Key for user verification permission
+         */
+        PSC_VERIFICATION("user_psc_verification");
 
         private final String stringValue;
 
