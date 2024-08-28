@@ -121,7 +121,7 @@ public class Permission {
         /**
          * Key for user verification permission
          */
-        PSC_VERIFICATION("user_psc_verification");
+        USER_PSC_VERIFICATION("user_psc_verification");
 
         private final String stringValue;
 
