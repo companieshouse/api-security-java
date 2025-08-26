@@ -32,8 +32,8 @@
         <source-level>21</source-level>
         <target-level>21</target-level>
         <!-- Spring -->
-        <spring-boot-dependencies.version>3.5.5</spring-boot-dependencies.version>
-        <spring-boot-maven-plugin.version>3.5.5</spring-boot-maven-plugin.version>
+        <spring-boot-dependencies.version>3.4.9</spring-boot-dependencies.version>
+        <spring-boot-maven-plugin.version>3.4.9</spring-boot-maven-plugin.version>
         <spring-core.version>6.2.10</spring-core.version>
         <jakarta.servlet-api.version>6.0.0</jakarta.servlet-api.version>
         <commons-collections4.version>4.4</commons-collections4.version>
