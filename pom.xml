@@ -34,9 +34,18 @@
         <!-- Spring -->
         <spring-boot-dependencies.version>3.4.9</spring-boot-dependencies.version>
         <spring-boot-maven-plugin.version>3.4.9</spring-boot-maven-plugin.version>
-        <spring-core.version>6.2.10</spring-core.version>
+        <spring-core.version>6.2.11</spring-core.version>
         <jakarta.servlet-api.version>6.0.0</jakarta.servlet-api.version>
         <commons-collections4.version>4.4</commons-collections4.version>
+        <!-- Sonar -->
+        <sonar.projectName>api-security-java</sonar.projectName>
+        <!--suppress UnresolvedMavenProperty -->
+        <sonar.host.url>${CODE_ANALYSIS_HOST_URL}</sonar.host.url>
+        <!--suppress UnresolvedMavenProperty -->
+        <sonar.token>${CODE_ANALYSIS_TOKEN}</sonar.token>
+        <sonar.login/>
+        <sonar.password/>
+        <sonar.projectKey>uk.gov.companieshouse:api-security-java</sonar.projectKey>
     </properties>
 
     <dependencyManagement>
