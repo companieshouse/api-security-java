@@ -16,12 +16,12 @@
     <properties>
         <!-- Dependency Versions -->
         <commons-beanutils.version>1.11.0</commons-beanutils.version>
-        <gson.version>2.13.1</gson.version>
-        <commons-lang3.version>3.18.0</commons-lang3.version>
+        <gson.version>2.13.2</gson.version>
+        <commons-lang3.version>3.19.0</commons-lang3.version>
         <maven-jar-plugin.version>2.4</maven-jar-plugin.version>
-        <api-sdk-java.version>6.4.1</api-sdk-java.version>
-        <structured-logging.version>3.0.37</structured-logging.version>
-        <api-sdk-manager-java-library.version>3.0.11</api-sdk-manager-java-library.version>
+        <api-sdk-java.version>6.4.8</api-sdk-java.version>
+        <structured-logging.version>3.0.42</structured-logging.version>
+        <api-sdk-manager-java-library.version>3.0.13</api-sdk-manager-java-library.version>
 
         <!-- Maven -->
         <maven-surefire-plugin.version>2.22.2</maven-surefire-plugin.version>
@@ -35,8 +35,9 @@
         <spring-boot-dependencies.version>3.4.9</spring-boot-dependencies.version>
         <spring-boot-maven-plugin.version>3.4.9</spring-boot-maven-plugin.version>
         <spring-core.version>6.2.11</spring-core.version>
-        <jakarta.servlet-api.version>6.0.0</jakarta.servlet-api.version>
+        <jakarta.servlet-api.version>6.1.0</jakarta.servlet-api.version>
         <commons-collections4.version>4.4</commons-collections4.version>
+        <junit-jupiter-engine.version>5.10.5</junit-jupiter-engine.version>
         <!-- Sonar -->
         <sonar.projectName>api-security-java</sonar.projectName>
         <!--suppress UnresolvedMavenProperty -->
@@ -61,13 +62,11 @@
     </dependencyManagement>
    
     <dependencies>
-        <!-- Compile -->
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-webmvc</artifactId>
             <optional>true</optional>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/org.springframework/spring-core -->
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-core</artifactId>
@@ -126,6 +125,12 @@
                     <artifactId>junit-vintage-engine</artifactId>
                 </exclusion>
             </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <version>${junit-jupiter-engine.version}</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <artifactId>commons-collections4</artifactId>
