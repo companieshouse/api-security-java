@@ -126,7 +126,12 @@ public class Permission {
         /**
          * Key for psc extension permission
          */
-        USER_PSC_EXTENSION("user_psc_extension");
+        USER_PSC_EXTENSION("user_psc_extension"),
+
+        /**
+         * Key for company package accounts
+         */
+        COMPANY_PACKAGE_ACCOUNTS("company_package_accounts");
 
         private final String stringValue;
 
