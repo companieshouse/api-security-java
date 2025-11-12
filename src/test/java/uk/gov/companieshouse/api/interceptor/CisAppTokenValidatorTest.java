@@ -1,8 +1,11 @@
 package uk.gov.companieshouse.api.interceptor;
 
+import com.nimbusds.jose.JWSHeader;
+import com.nimbusds.jose.JWSVerifier;
 import com.nimbusds.jose.jwk.JWK;
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jwt.JWTClaimsSet;
+import com.nimbusds.jwt.SignedJWT;
 import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -13,7 +16,7 @@ import org.mockito.exceptions.misusing.WrongTypeOfReturnValue;
 
 import com.nimbusds.jose.jwk.RSAKey;
 
-import java.io.IOException;
+import java.security.interfaces.RSAPublicKey;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -302,7 +305,23 @@ class CisAppTokenValidatorTest {
         assertThrows(NullPointerException.class, () -> validator.verifyTokenClaimSet(null));
     }
     
+    @Test
+    void verifyTokenClaimSet_nullClaims_throwsException() {
+        assertThrows(NullPointerException.class, () -> validator.verifyTokenClaimSet(null));
+    }
 
+    @Test
+    void isInvalidSignature_invalidSignature_returnsTrue() throws Exception {
+        CisAppTokenValidator validatorSpy = Mockito.spy(new CisAppTokenValidator(TENANT_ID, LOGIC_APP_ID, CIS_APP_ID));
+        SignedJWT mockJwt = mock(SignedJWT.class);
+        JWSHeader mockHeader = mock(JWSHeader.class);
+        when(mockJwt.getHeader()).thenReturn(mockHeader);
+        when(mockHeader.getKeyID()).thenReturn("keyId");
+        RSAPublicKey mockKey = mock(RSAPublicKey.class);
+        doReturn(mockKey).when(validatorSpy).getPublicKeyFromAzureADWithCache("keyId");
+        doReturn(false).when(mockJwt).verify(any(JWSVerifier.class));
+        assertTrue(validatorSpy.isInvalidSignature(mockJwt));
+    }
     private static java.util.stream.Stream<String> invalidTokenProvider() {
         return java.util.stream.Stream.of(null, "", "not-a-jwt");
     }

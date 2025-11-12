@@ -75,7 +75,7 @@ public class CisAppTokenValidator {
         }
     }
 
-    private boolean isInvalidSignature(SignedJWT signedJwt) throws IOException, URISyntaxException, ParseException, JOSEException {
+    protected boolean isInvalidSignature(SignedJWT signedJwt) throws IOException, URISyntaxException, ParseException, JOSEException {
         String keyId = signedJwt.getHeader().getKeyID();
         RSAPublicKey publicKey = getPublicKeyFromAzureADWithCache(keyId);
         JWSVerifier verifier = new RSASSAVerifier(publicKey);
