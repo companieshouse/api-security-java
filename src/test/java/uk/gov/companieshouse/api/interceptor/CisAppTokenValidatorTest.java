@@ -1,6 +1,5 @@
 package uk.gov.companieshouse.api.interceptor;
 
-import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.jwk.JWK;
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jwt.JWTClaimsSet;
@@ -8,13 +7,10 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mockito;
 import org.mockito.exceptions.misusing.WrongTypeOfReturnValue;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.text.ParseException;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -39,19 +35,13 @@ class CisAppTokenValidatorTest {
         request = mock(HttpServletRequest.class);
     }
 
-    @Test
-    void hasValidApplicationToken_missingToken_returnsFalse() {
-        when(request.getHeader(HEADER_KEY)).thenReturn(null);
-        assertFalse(validator.hasValidApplicationToken(request));
-    }
-
     @ParameterizedTest
-    @ValueSource(strings = { "", "not-a-jwt"})
-    void hasValidApplicationToken_invalidOrEmptyToken_returnsFalse(String token) {
+    @MethodSource("invalidTokenProvider")
+    void hasValidApplicationToken_invalidTokens_returnFalse(String token) {
         when(request.getHeader(HEADER_KEY)).thenReturn(token);
         assertFalse(validator.hasValidApplicationToken(request));
     }
-
+    
     @Test
     void hasValidApplicationToken_invalidSignature_returnsFalse() {
         when(request.getHeader(HEADER_KEY)).thenReturn(VALID_TOKEN);
@@ -165,7 +155,6 @@ class CisAppTokenValidatorTest {
         assertFalse(validator.verifyTokenClaimSet(claims));
     }
 
-    // Additional tests for null/missing claims
     @Test
     void verifyTokenClaimSet_nullAudience_returnsFalse() {
         JWTClaimsSet claims = new JWTClaimsSet.Builder()
@@ -215,6 +204,30 @@ class CisAppTokenValidatorTest {
     }
 
     @Test
+    void verifyTokenClaimSet_nullExpiration_returnsFalse() {
+        JWTClaimsSet claims = new JWTClaimsSet.Builder()
+                .audience("api://" + CIS_APP_ID)
+                .claim("appid", LOGIC_APP_ID)
+                .issuer("https://sts.windows.net/" + TENANT_ID + "/")
+                .claim("tid", TENANT_ID)
+                .notBeforeTime(new Date(System.currentTimeMillis() - 10000))
+                .build();
+        assertThrows(NullPointerException.class, () -> validator.verifyTokenClaimSet(claims));
+    }
+
+    @Test
+    void verifyTokenClaimSet_nullNotBefore_returnsException() {
+        JWTClaimsSet claims = new JWTClaimsSet.Builder()
+                .audience("api://" + CIS_APP_ID)
+                .claim("appid", LOGIC_APP_ID)
+                .issuer("https://sts.windows.net/" + TENANT_ID + "/")
+                .claim("tid", TENANT_ID)
+                .expirationTime(new Date(System.currentTimeMillis() + 10000))
+                .build();
+        assertThrows(NullPointerException.class, () -> validator.verifyTokenClaimSet(claims));
+    }
+
+    @Test
     void getPublicKeyFromAzureADWithCache_nonRSAKey_throwsException() {
         CisAppTokenValidator validatorSpy = spy(new CisAppTokenValidator(TENANT_ID, LOGIC_APP_ID, CIS_APP_ID));
         JWKSet mockJwkSet = mock(JWKSet.class);
@@ -235,15 +248,16 @@ class CisAppTokenValidatorTest {
     }
 
     @Test
-    void getPublicKeyFromAzureADWithCache_jwkSetLoadThrowsException_throwsException() throws IOException, URISyntaxException, ParseException, JOSEException {
+    void getPublicKeyFromAzureADWithCache_jwkSetLoadThrowsException_throwsException() throws Exception {
         CisAppTokenValidator validatorSpy = spy(new CisAppTokenValidator(TENANT_ID, LOGIC_APP_ID, CIS_APP_ID));
         validatorSpy.jwkSetCache.set(null);
         doThrow(new RuntimeException("Failed to load JWKSet"))
-                    .when(validatorSpy)
-                    .getPublicKeyFromAzureADWithCache(anyString());
-        
-        assertThrows(RuntimeException.class, () -> {
-                validatorSpy.getPublicKeyFromAzureADWithCache("keyId");
-        });
+                .when(validatorSpy)
+                .getPublicKeyFromAzureADWithCache(anyString());
+        assertThrows(RuntimeException.class, () -> validatorSpy.getPublicKeyFromAzureADWithCache("keyId"));
+    }
+
+    private static java.util.stream.Stream<String> invalidTokenProvider() {
+        return java.util.stream.Stream.of(null, "", "not-a-jwt");
     }
 }
