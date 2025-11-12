@@ -11,6 +11,9 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mockito;
 import org.mockito.exceptions.misusing.WrongTypeOfReturnValue;
 
+import com.nimbusds.jose.jwk.RSAKey;
+
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -256,6 +259,49 @@ class CisAppTokenValidatorTest {
                 .getPublicKeyFromAzureADWithCache(anyString());
         assertThrows(RuntimeException.class, () -> validatorSpy.getPublicKeyFromAzureADWithCache("keyId"));
     }
+
+    @Test
+    void getPublicKeyFromAzureADWithCache_rsaKeyConversionThrowsException() throws Exception {
+        CisAppTokenValidator validatorSpy = spy(new CisAppTokenValidator(TENANT_ID, LOGIC_APP_ID, CIS_APP_ID));
+        JWKSet mockJwkSet = mock(JWKSet.class);
+        RSAKey mockRsaKey = mock(RSAKey.class);
+        validatorSpy.jwkSetCache.set(mockJwkSet);
+        when(mockJwkSet.getKeyByKeyId(anyString())).thenReturn((JWK) mockRsaKey);
+        doThrow(new RuntimeException("RSA conversion error")).when(mockRsaKey).toRSAPublicKey();
+        assertThrows(RuntimeException.class, () -> validatorSpy.getPublicKeyFromAzureADWithCache("keyId"));
+    }
+
+    @Test
+    void hasValidApplicationToken_headerMissing_returnsFalse() {
+        when(request.getHeader("missing-header")).thenReturn(null);
+        assertFalse(validator.hasValidApplicationToken(request));
+    }
+
+    @Test
+    void verifyAudience_emptyAudience_returnsFalse() {
+        assertFalse(validator.verifyAudience(CIS_APP_ID, Arrays.asList()));
+    }
+
+    @Test
+    void verifyAppId_nullClaim_returnsFalse() {
+        assertFalse(validator.verifyAppId(LOGIC_APP_ID, null));
+    }
+
+    @Test
+    void verifyIssuer_nullIssuer_returnsFalse() {
+        assertFalse(validator.verifyIssuer(null));
+    }
+
+    @Test
+    void verifyTenant_nullTenant_returnsFalse() {
+        assertFalse(validator.verifyTenant(null));
+    }
+
+    @Test
+    void verifyTokenClaimSet_nullClaims_returnsException() {
+        assertThrows(NullPointerException.class, () -> validator.verifyTokenClaimSet(null));
+    }
+    
 
     private static java.util.stream.Stream<String> invalidTokenProvider() {
         return java.util.stream.Stream.of(null, "", "not-a-jwt");
