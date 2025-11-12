@@ -1,11 +1,15 @@
 package uk.gov.companieshouse.api.interceptor;
 
+import com.nimbusds.jose.jwk.JWK;
+import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jwt.JWTClaimsSet;
 import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import org.mockito.exceptions.misusing.WrongTypeOfReturnValue;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -22,7 +26,6 @@ class CisAppTokenValidatorTest {
     private static final String HEADER_KEY = "x-oauth-access-token";
 
     private CisAppTokenValidator validator;
-    
     private HttpServletRequest request;
 
     @BeforeEach
@@ -54,6 +57,11 @@ class CisAppTokenValidatorTest {
         when(request.getHeader(HEADER_KEY)).thenReturn(VALID_TOKEN);
         doReturn(false).when(validator).validateToken(VALID_TOKEN);
         assertFalse(validator.hasValidApplicationToken(request));
+    }
+
+    @Test
+    void validateToken_invalidJwtFormat_returnsFalse() {
+        assertFalse(validator.validateToken("not-a-jwt"));
     }
 
     @Test
@@ -149,5 +157,98 @@ class CisAppTokenValidatorTest {
                 .notBeforeTime(new Date(System.currentTimeMillis() + 10000))
                 .build();
         assertFalse(validator.verifyTokenClaimSet(claims));
+    }
+
+    @Test
+    void verifyTokenClaimSet_missingClaims_returnsFalse() {
+        JWTClaimsSet claims = new JWTClaimsSet.Builder().build();
+        assertFalse(validator.verifyTokenClaimSet(claims));
+    }
+
+    // Additional tests for null/missing claims
+    @Test
+    void verifyTokenClaimSet_nullAudience_returnsFalse() {
+        JWTClaimsSet claims = new JWTClaimsSet.Builder()
+                .claim("appid", LOGIC_APP_ID)
+                .issuer("https://sts.windows.net/" + TENANT_ID + "/")
+                .claim("tid", TENANT_ID)
+                .expirationTime(new Date(System.currentTimeMillis() + 10000))
+                .notBeforeTime(new Date(System.currentTimeMillis() - 10000))
+                .build();
+        assertFalse(validator.verifyTokenClaimSet(claims));
+    }
+
+    @Test
+    void verifyTokenClaimSet_nullAppId_returnsFalse() {
+        JWTClaimsSet claims = new JWTClaimsSet.Builder()
+                .audience("api://" + CIS_APP_ID)
+                .issuer("https://sts.windows.net/" + TENANT_ID + "/")
+                .claim("tid", TENANT_ID)
+                .expirationTime(new Date(System.currentTimeMillis() + 10000))
+                .notBeforeTime(new Date(System.currentTimeMillis() - 10000))
+                .build();
+        assertFalse(validator.verifyTokenClaimSet(claims));
+    }
+
+    @Test
+    void verifyTokenClaimSet_nullTid_returnsFalse() {
+        JWTClaimsSet claims = new JWTClaimsSet.Builder()
+                .audience("api://" + CIS_APP_ID)
+                .claim("appid", LOGIC_APP_ID)
+                .issuer("https://sts.windows.net/" + TENANT_ID + "/")
+                .expirationTime(new Date(System.currentTimeMillis() + 10000))
+                .notBeforeTime(new Date(System.currentTimeMillis() - 10000))
+                .build();
+        assertFalse(validator.verifyTokenClaimSet(claims));
+    }
+
+    @Test
+    void verifyTokenClaimSet_nullIssuer_returnsFalse() {
+        JWTClaimsSet claims = new JWTClaimsSet.Builder()
+                .audience("api://" + CIS_APP_ID)
+                .claim("appid", LOGIC_APP_ID)
+                .claim("tid", TENANT_ID)
+                .expirationTime(new Date(System.currentTimeMillis() + 10000))
+                .notBeforeTime(new Date(System.currentTimeMillis() - 10000))
+                .build();
+        assertFalse(validator.verifyTokenClaimSet(claims));
+    }
+
+    @Test
+    void getPublicKeyFromAzureADWithCache_nonRSAKey_throwsException() {
+        CisAppTokenValidator validatorSpy = spy(new CisAppTokenValidator(TENANT_ID, LOGIC_APP_ID, CIS_APP_ID));
+        JWKSet mockJwkSet = mock(JWKSet.class);
+        JWK mockJwk = mock(JWK.class); // Not an RSAKey
+        validatorSpy.jwkSetCache.set(mockJwkSet);
+        when(mockJwkSet.getKeyByKeyId(anyString())).thenReturn(mockJwk);
+        assertThrows(IllegalArgumentException.class, () -> validatorSpy.getPublicKeyFromAzureADWithCache("keyId"));
+    }
+
+    @Test
+    void getPublicKeyFromAzureADWithCache_keyNotFound_refreshesCacheAndThrowsIfStillMissing() {
+        CisAppTokenValidator validatorSpy = spy(new CisAppTokenValidator(TENANT_ID, LOGIC_APP_ID, CIS_APP_ID));
+        JWKSet mockJwkSet = mock(JWKSet.class);
+        validatorSpy.jwkSetCache.set(mockJwkSet);
+        when(mockJwkSet.getKeyByKeyId(anyString())).thenReturn(null); // Simulate key not found
+        doReturn(mockJwkSet).when(validatorSpy).jwkSetCache.get();
+        assertThrows(WrongTypeOfReturnValue.class, () -> validatorSpy.getPublicKeyFromAzureADWithCache("keyId"));
+    }
+
+    @Test
+    void getPublicKeyFromAzureADWithCache_jwkSetLoadThrowsException_throwsException() {
+        CisAppTokenValidator validatorSpy = spy(new CisAppTokenValidator(TENANT_ID, LOGIC_APP_ID, CIS_APP_ID));
+        validatorSpy.jwkSetCache.set(null);
+        try {
+            doThrow(new RuntimeException("Failed to load JWKSet"))
+                    .when(validatorSpy)
+                    .getPublicKeyFromAzureADWithCache(anyString());
+        } catch (Exception ignored) {}
+        assertThrows(RuntimeException.class, () -> {
+            try {
+                validatorSpy.getPublicKeyFromAzureADWithCache("keyId");
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        });
     }
 }

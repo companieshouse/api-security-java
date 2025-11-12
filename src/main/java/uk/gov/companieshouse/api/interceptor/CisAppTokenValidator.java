@@ -1,5 +1,6 @@
 package uk.gov.companieshouse.api.interceptor;
 
+import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWSVerifier;
 import com.nimbusds.jose.crypto.RSASSAVerifier;
 import com.nimbusds.jose.jwk.JWK;
@@ -8,10 +9,12 @@ import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
 import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.stereotype.Component;
 
+import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.security.interfaces.RSAPublicKey;
+import java.text.ParseException;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -35,7 +38,7 @@ public class CisAppTokenValidator {
     private final String logicAppClientId;
     private final String cisAppClientId;
 
-    private final AtomicReference<JWKSet> jwkSetCache = new AtomicReference<>();
+    protected final AtomicReference<JWKSet> jwkSetCache = new AtomicReference<>();
 
     public CisAppTokenValidator(String tenantId, String logicAppClientId, String cisAppClientId) {
         this.tenantId = tenantId;
@@ -72,14 +75,14 @@ public class CisAppTokenValidator {
         }
     }
 
-    private boolean isInvalidSignature(SignedJWT signedJwt) throws Exception {
+    private boolean isInvalidSignature(SignedJWT signedJwt) throws IOException, URISyntaxException, ParseException, JOSEException {
         String keyId = signedJwt.getHeader().getKeyID();
         RSAPublicKey publicKey = getPublicKeyFromAzureADWithCache(keyId);
         JWSVerifier verifier = new RSASSAVerifier(publicKey);
         return !signedJwt.verify(verifier);
     }
 
-    private RSAPublicKey getPublicKeyFromAzureADWithCache(String keyId) throws Exception {
+    protected RSAPublicKey getPublicKeyFromAzureADWithCache(String keyId) throws IOException, URISyntaxException, ParseException, JOSEException {
         final String KEYS_URL = MS_LOGIN_BASE_URL + tenantId + "/discovery/v2.0/keys";
 
         JWKSet jwkSet = jwkSetCache.get();
