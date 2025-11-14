@@ -16,6 +16,7 @@ import org.mockito.exceptions.misusing.WrongTypeOfReturnValue;
 
 import com.nimbusds.jose.jwk.RSAKey;
 
+import java.io.IOException;
 import java.security.interfaces.RSAPublicKey;
 import java.util.Arrays;
 import java.util.Date;
@@ -240,7 +241,7 @@ class CisAppTokenValidatorTest {
         JWK mockJwk = mock(JWK.class); // Not an RSAKey
         validatorSpy.jwkSetCache.set(mockJwkSet);
         when(mockJwkSet.getKeyByKeyId(anyString())).thenReturn(mockJwk);
-        assertThrows(IllegalArgumentException.class, () -> validatorSpy.getPublicKeyFromAzureADWithCache("keyId"));
+        assertThrows(IOException.class, () -> validatorSpy.getPublicKeyFromAzureADWithCache("keyId"));
     }
 
     @Test
@@ -271,7 +272,7 @@ class CisAppTokenValidatorTest {
         validatorSpy.jwkSetCache.set(mockJwkSet);
         when(mockJwkSet.getKeyByKeyId(anyString())).thenReturn((JWK) mockRsaKey);
         doThrow(new RuntimeException("RSA conversion error")).when(mockRsaKey).toRSAPublicKey();
-        assertThrows(RuntimeException.class, () -> validatorSpy.getPublicKeyFromAzureADWithCache("keyId"));
+        assertThrows(IOException.class, () -> validatorSpy.getPublicKeyFromAzureADWithCache("keyId"));
     }
 
     @Test
@@ -322,6 +323,35 @@ class CisAppTokenValidatorTest {
         doReturn(false).when(mockJwt).verify(any(JWSVerifier.class));
         assertTrue(validatorSpy.isInvalidSignature(mockJwt));
     }
+
+    @Test
+    void validateToken_validSignatureAndClaims_returnsTrue() throws Exception {
+        CisAppTokenValidator validatorSpy = spy(new CisAppTokenValidator(TENANT_ID, LOGIC_APP_ID, CIS_APP_ID));
+        doReturn(false).when(validatorSpy).isInvalidSignature(any(SignedJWT.class));
+        doReturn(true).when(validatorSpy).verifyTokenClaimSet(any(JWTClaimsSet.class));
+        String dummyJwt = SignedJWT.parse("eyJhbGciOiJSUzI1NiIsImtpZCI6IjEyMzQifQ.eyJleHAiOjI0MDAwMDAwMDAsIm5iZiI6MTYwMDAwMDAwMH0.signature").serialize();
+        assertTrue(validatorSpy.validateToken(dummyJwt));
+    }
+
+    @Test
+    void validateToken_invalidSignature_returnsFalse() throws Exception {
+        CisAppTokenValidator validatorSpy = spy(new CisAppTokenValidator(TENANT_ID, LOGIC_APP_ID, CIS_APP_ID));
+        doReturn(true).when(validatorSpy).isInvalidSignature(any(SignedJWT.class));
+        String dummyJwt = SignedJWT.parse("eyJhbGciOiJSUzI1NiIsImtpZCI6IjEyMzQifQ.eyJleHAiOjI0MDAwMDAwMDAsIm5iZiI6MTYwMDAwMDAwMH0.signature").serialize();
+        assertFalse(validatorSpy.validateToken(dummyJwt));
+    }
+
+    @Test
+    void validateToken_validSignatureInvalidClaims_returnsFalse() throws Exception {
+        CisAppTokenValidator validatorSpy = spy(new CisAppTokenValidator(TENANT_ID, LOGIC_APP_ID, CIS_APP_ID));
+        doReturn(false).when(validatorSpy).isInvalidSignature(any(SignedJWT.class));
+        doReturn(false).when(validatorSpy).verifyTokenClaimSet(any(JWTClaimsSet.class));
+        String dummyJwt = SignedJWT.parse("eyJhbGciOiJSUzI1NiIsImtpZCI6IjEyMzQifQ.eyJleHAiOjI0MDAwMDAwMDAsIm5iZiI6MTYwMDAwMDAwMH0.signature").serialize();
+        assertFalse(validatorSpy.validateToken(dummyJwt));
+    }
+    
+    
+    
     private static java.util.stream.Stream<String> invalidTokenProvider() {
         return java.util.stream.Stream.of(null, "", "not-a-jwt");
     }

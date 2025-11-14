@@ -33,6 +33,8 @@ public class CisAppTokenValidator {
     private static final String TENANT_ID_CLAIM_NAME = "tid";
     private static final String APP_ID_CLAIM_NAME = "appid";
     private static final String AUTH_ACCESS_TOKEN_HEADER_KEY = "x-oauth-access-token";
+    private static final long CACHE_TTL_MILLIS = (60 * 60 * 1000); // 1 hour
+    private volatile long jwkSetCacheTimestamp = 0;
 
     private final String tenantId;
     private final String logicAppClientId;
@@ -84,19 +86,24 @@ public class CisAppTokenValidator {
 
     protected RSAPublicKey getPublicKeyFromAzureADWithCache(String keyId) throws IOException, URISyntaxException, ParseException, JOSEException {
         final String KEYS_URL = MS_LOGIN_BASE_URL + tenantId + "/discovery/v2.0/keys";
+        long now = System.currentTimeMillis();
 
         JWKSet jwkSet = jwkSetCache.get();
-        if (jwkSet == null) {
-            jwkSet = JWKSet.load(new URI(KEYS_URL).toURL());
-            jwkSetCache.set(jwkSet);
-        }
+        boolean cacheExpired = (now - jwkSetCacheTimestamp) > CACHE_TTL_MILLIS;
+        JWK jwk = (jwkSet != null && !cacheExpired) ? jwkSet.getKeyByKeyId(keyId) : null;
 
-        JWK jwk = jwkSet.getKeyByKeyId(keyId);
         if (jwk == null) {
-            // Refresh cache if key not found
-            jwkSet = JWKSet.load(new URI(KEYS_URL).toURL());
-            jwkSetCache.set(jwkSet);
-            jwk = jwkSet.getKeyByKeyId(keyId);
+            synchronized (jwkSetCache) {
+                jwkSet = jwkSetCache.get();
+                cacheExpired = (now - jwkSetCacheTimestamp) > CACHE_TTL_MILLIS;
+                jwk = (jwkSet != null && !cacheExpired) ? jwkSet.getKeyByKeyId(keyId) : null;
+                if (jwk == null) {
+                    jwkSet = JWKSet.load(new URI(KEYS_URL).toURL());
+                    jwkSetCache.set(jwkSet);
+                    jwkSetCacheTimestamp = System.currentTimeMillis();
+                    jwk = jwkSet.getKeyByKeyId(keyId);
+                }
+            }
         }
 
         if (!(jwk instanceof RSAKey)) {
@@ -105,6 +112,7 @@ public class CisAppTokenValidator {
 
         return ((RSAKey) jwk).toRSAPublicKey();
     }
+
 
     protected boolean verifyTokenClaimSet(JWTClaimsSet claims) {
         return verifyAudience(cisAppClientId, claims.getAudience())
