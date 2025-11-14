@@ -350,8 +350,6 @@ class CisAppTokenValidatorTest {
         assertFalse(validatorSpy.validateToken(dummyJwt));
     }
     
-    
-    
     private static java.util.stream.Stream<String> invalidTokenProvider() {
         return java.util.stream.Stream.of(null, "", "not-a-jwt");
     }
