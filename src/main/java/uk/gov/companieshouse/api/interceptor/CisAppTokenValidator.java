@@ -39,13 +39,15 @@ public class CisAppTokenValidator {
     private final String tenantId;
     private final String logicAppClientId;
     private final String cisAppClientId;
-
+    private final String keysUrl;
+    
     protected final AtomicReference<JWKSet> jwkSetCache = new AtomicReference<>();
 
     public CisAppTokenValidator(String tenantId, String logicAppClientId, String cisAppClientId) {
         this.tenantId = tenantId;
         this.logicAppClientId = logicAppClientId;
         this.cisAppClientId = cisAppClientId;
+        this.keysUrl = MS_LOGIN_BASE_URL + tenantId + "/discovery/v2.0/keys";
     }
 
     public boolean hasValidApplicationToken(HttpServletRequest request) {
@@ -85,7 +87,6 @@ public class CisAppTokenValidator {
     }
 
     protected RSAPublicKey getPublicKeyFromAzureADWithCache(String keyId) throws IOException, URISyntaxException, ParseException, JOSEException {
-        final String KEYS_URL = MS_LOGIN_BASE_URL + tenantId + "/discovery/v2.0/keys";
         long now = System.currentTimeMillis();
 
         JWKSet jwkSet = jwkSetCache.get();
@@ -98,7 +99,7 @@ public class CisAppTokenValidator {
                 cacheExpired = (now - jwkSetCacheTimestamp) > CACHE_TTL_MILLIS;
                 jwk = (jwkSet != null && !cacheExpired) ? jwkSet.getKeyByKeyId(keyId) : null;
                 if (jwk == null) {
-                    jwkSet = JWKSet.load(new URI(KEYS_URL).toURL());
+                    jwkSet = JWKSet.load(new URI(keysUrl).toURL());
                     jwkSetCache.set(jwkSet);
                     jwkSetCacheTimestamp = System.currentTimeMillis();
                     jwk = jwkSet.getKeyByKeyId(keyId);

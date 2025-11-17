@@ -28,17 +28,17 @@ public class CisAppAuthenticationInterceptor implements HandlerInterceptor {
 
     private final CisAppTokenValidator cisAppTokenValidator;
 
-    @Bean
-    public CisAppTokenValidator applicationTokenValidator() {
-        return new CisAppTokenValidator(tenantId, logicAppClientId, cisAppClientId);
-    }
-    
     public CisAppAuthenticationInterceptor(String tenantId, String logicAppClientId, String cisAppClientId) {
         this.tenantId = tenantId;
         this.logicAppClientId = logicAppClientId;
         this.cisAppClientId = cisAppClientId;
         this.cisAppTokenValidator = applicationTokenValidator();
         logger = LoggerFactory.getLogger(String.valueOf(CisAppAuthenticationInterceptor.class));
+    }
+
+    @Bean
+    public CisAppTokenValidator applicationTokenValidator() {
+        return new CisAppTokenValidator(tenantId, logicAppClientId, cisAppClientId);
     }
 
     @Override
