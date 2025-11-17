@@ -24,7 +24,7 @@
         <api-sdk-manager-java-library.version>3.0.13</api-sdk-manager-java-library.version>
 
         <!-- Maven -->
-        <maven-surefire-plugin.version>2.22.2</maven-surefire-plugin.version>
+        <maven-surefire-plugin.version>3.5.4</maven-surefire-plugin.version>
         <maven-shade-plugin.version>3.2.4</maven-shade-plugin.version>
         <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
 
@@ -32,12 +32,11 @@
         <source-level>21</source-level>
         <target-level>21</target-level>
         <!-- Spring -->
-        <spring-boot-dependencies.version>3.4.9</spring-boot-dependencies.version>
+        <spring-boot-dependencies.version>3.5.7</spring-boot-dependencies.version>
         <spring-boot-maven-plugin.version>3.4.9</spring-boot-maven-plugin.version>
         <spring-core.version>6.2.11</spring-core.version>
         <jakarta.servlet-api.version>6.1.0</jakarta.servlet-api.version>
         <commons-collections4.version>4.4</commons-collections4.version>
-        <junit-jupiter-engine.version>5.10.5</junit-jupiter-engine.version>
         <!-- Sonar -->
         <sonar.projectName>api-security-java</sonar.projectName>
         <!--suppress UnresolvedMavenProperty -->
@@ -47,6 +46,10 @@
         <sonar.login/>
         <sonar.password/>
         <sonar.projectKey>uk.gov.companieshouse:api-security-java</sonar.projectKey>
+        <!--MSAL depedencies -->
+        <nimbus-jose-jwt.version>10.6</nimbus-jose-jwt.version>
+        <oauth2-oidc-sdk.version>11.30.1</oauth2-oidc-sdk.version>
+        
     </properties>
 
     <dependencyManagement>
@@ -127,15 +130,19 @@
             </exclusions>
         </dependency>
         <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-engine</artifactId>
-            <version>${junit-jupiter-engine.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <artifactId>commons-collections4</artifactId>
             <groupId>org.apache.commons</groupId>
             <version>${commons-collections4.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.nimbusds</groupId>
+            <artifactId>nimbus-jose-jwt</artifactId>
+            <version>${nimbus-jose-jwt.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.nimbusds</groupId>
+            <artifactId>oauth2-oidc-sdk</artifactId>
+            <version>${oauth2-oidc-sdk.version}</version>
         </dependency>
     </dependencies>
 
