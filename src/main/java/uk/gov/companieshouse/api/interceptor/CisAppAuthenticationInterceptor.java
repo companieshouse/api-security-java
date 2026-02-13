@@ -17,7 +17,6 @@ import uk.gov.companieshouse.logging.LoggerFactory;
  * <p>
  * Intended for use in Spring Boot applications as a {@link HandlerInterceptor}.
  */
-@Component
 public class CisAppAuthenticationInterceptor implements HandlerInterceptor {
 
     private final Logger logger;
