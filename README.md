@@ -6,6 +6,7 @@ Things To consider
 --
 
 + All development is now based on the `main` branch (Java 21).
++ Java 8 is no longer supported or maintained.
 
 ###### Branching
 
