@@ -5,20 +5,25 @@ Contains a generic set of authorisation utilities in Java including Interceptors
 Things To consider
 --
 
-+ Always make sure any code changes you make get copied across to `main-8` (compatible with Java 8) also to `main` (compatible with Java 21)
++ All development is now based on the `main` branch (Java 21).
++ Java 8 is no longer supported or maintained.
 
-###### Changes Specific to Java 8
-
-+ Please create branch only from `main-8`
-+ Please raise a PR to merge your changes only to [main-8](https://github.com/companieshouse/api-security-java/tree/main-8) branch
-+ Use Java 8 Major tags generated from pipeline in your references (example : tags 0.x.x for java 8)
-
-###### Changes Specific to Java 21
+###### Branching
 
 + Please create branch only from `main`
 + Please merge your changes only to [main](https://github.com/companieshouse/api-security-java) branch
-+ Use Java 21 Major tags generated from pipeline in your references (example : tags 2.x.x for java 21)
++ All releases are generated from the `main` pipeline
+
+###### Versioning
++ Java 21 Major tags are generated from the pipeline
++ Version format example: `2.x.x`
 
 ###### Pipeline
 
-+ Please use this [Pipeline](https://ci-platform.companieshouse.gov.uk/teams/team-development/pipelines/api-security-java) and make sure respective `source-code-main` or `source-code-main-8` task gets started once the PR is created or after the PR is merged to `main` or `main-8` and once the pipeline tasks are complete then use the created tags respectively.
+Please use this  `api-security-java` Concourse [Pipeline](https://ci-platform.companieshouse.gov.uk/teams/team-development/pipelines/api-security-java)
+
+The `source-code-main` resource is triggered when:
+- A PR is created
+- A PR is merged into `main`
+
+Once pipeline tasks complete successfully, use the generated tags for downstream references.
