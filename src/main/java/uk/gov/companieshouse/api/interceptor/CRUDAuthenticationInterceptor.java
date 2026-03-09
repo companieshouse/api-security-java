@@ -1,6 +1,8 @@
 package uk.gov.companieshouse.api.interceptor;
 
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -20,23 +22,43 @@ import uk.gov.companieshouse.logging.Logger;
 import uk.gov.companieshouse.logging.LoggerFactory;
 
 /**
- * Checks the request contains the relevant token permission value based on the
- * http method 
- * It will try to find a {@link TokenPermissions} object in the
- * request or create one and store it in the request if not
+ * Interceptor for CRUD authentication based on token permissions.
+ * <p>
+ * Checks the request contains the relevant token permission value based on the HTTP method.
+ * It will try to find a {@link TokenPermissions} object in the request or create one and store it
+ * in the request if not present.
+ * </p>
+ *
+ * <p>
+ * If the incoming request has at least one of the specified permissions (any permission in
+ * {@code permissionKeys}) the request is allowed to proceed; otherwise it responds with
+ * {@code 401 Unauthorized}.
+ * </p>
+ *
+ * <ul>
+ *   <li>{@code anyPermissionKeys}: Collection of expected permission keys. If any is granted, access is allowed.</li>
+ *   <li>{@code ignoreAPIKeyRequests}: If true, all API key requests are allowed without permission checks.</li>
+ *   <li>{@code ignoredHttpMethods}: Optional array of HTTP methods for which the interceptor will not run.</li>
+ * </ul>
+ *
+ * <p>
+ * Token permissions are retrieved from the request, or created and stored if not present.
+ * After handling, token permissions are cleaned up to prevent leakage between requests.
+ * </p>
  */
 public class CRUDAuthenticationInterceptor implements HandlerInterceptor {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(String.valueOf(CRUDAuthenticationInterceptor.class));
 
-    private final Permission.Key permissionKey;
+    private final Collection<Permission.Key> anyPermissionKeys;
     private final boolean ignoreAPIKeyRequests;
     private final Set<String> ignoredHttpMethods;
 
     /**
      *
-     * @param permissionKey The expected permission key
-     * @param ignoredHttpMethods An optional array of http methods for which the interceptor won't run
+     * @param permissionKey      The expected permission key
+     * @param ignoredHttpMethods An optional array of http methods for which the
+     *                           interceptor won't run
      */
     public CRUDAuthenticationInterceptor(Permission.Key permissionKey, String... ignoredHttpMethods) {
         this(permissionKey, false, ignoredHttpMethods);
@@ -44,19 +66,51 @@ public class CRUDAuthenticationInterceptor implements HandlerInterceptor {
 
     /**
      *
-     * @param permissionKey The expected permission key
-     * @param ignoreAPIKeyRequests If true this interceptor will allow any API key traffic through.
-     *         Other specific API key checks (for elevated privileges etc) should be applied to these routes to cover specific logic when this is true.
-     * @param ignoredHttpMethods An optional array of http methods for which the interceptor won't run
+     * @param anyPermissionKeys The expected permission keys. If any is granted, access is allowed.
+     * @param ignoredHttpMethods An optional array of http methods for which the
+     *                           interceptor won't run
      */
-    public CRUDAuthenticationInterceptor(Permission.Key permissionKey, boolean ignoreAPIKeyRequests, String... ignoredHttpMethods) {
-        this.permissionKey = permissionKey;
-        this.ignoreAPIKeyRequests  = ignoreAPIKeyRequests;
+    public CRUDAuthenticationInterceptor(Collection<Permission.Key> anyPermissionKeys, String... ignoredHttpMethods) {
+        this(anyPermissionKeys, false, ignoredHttpMethods);
+    }
+
+    /**
+     *
+     * @param permissionKey      The any expected permission key
+     * @param ignoreAPIKeyRequests If true this interceptor will allow any API key
+     *                             traffic through.
+     *                             Other specific API key checks (for elevated
+     *                             privileges etc) should be applied to these routes
+     *                             to cover specific logic when this is true.
+     * @param ignoredHttpMethods   An optional array of http methods for which the
+     *                             interceptor won't run
+     */
+    public CRUDAuthenticationInterceptor(Permission.Key permissionKey, boolean ignoreAPIKeyRequests,
+            String... ignoredHttpMethods) {
+        this(Collections.singleton(permissionKey), ignoreAPIKeyRequests, ignoredHttpMethods);
+    }
+
+    /**
+     * 
+     * @param anyPermissionKeys The any expected permission keys. If any is granted, access is allowed.
+     * @param ignoreAPIKeyRequests If true this interceptor will allow any API key
+     *                             traffic through.
+     *                             Other specific API key checks (for elevated
+     *                             privileges etc) should be applied to these routes
+     *                             to cover specific logic when this is true.
+     * @param ignoredHttpMethods   An optional array of http methods for which the
+     *                             interceptor won't run
+     */
+    public CRUDAuthenticationInterceptor(Collection<Permission.Key> anyPermissionKeys, boolean ignoreAPIKeyRequests,
+            String... ignoredHttpMethods) {
+        this.anyPermissionKeys = anyPermissionKeys;
+        this.ignoreAPIKeyRequests = ignoreAPIKeyRequests;
         this.ignoredHttpMethods = new HashSet<>(Arrays.asList(ignoredHttpMethods));
     }
 
     @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws InvalidTokenPermissionException{
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
+            throws InvalidTokenPermissionException {
         if (ignoreRequest(request)) {
             return true;
         }
@@ -64,19 +118,26 @@ public class CRUDAuthenticationInterceptor implements HandlerInterceptor {
         final TokenPermissions tokenPermissions = getTokenPermissions(request);
 
         final String permissionValue = getValue(request);
-        final boolean authorised = tokenPermissions.hasPermission(permissionKey, permissionValue);
-
         final Map<String, Object> debugMap = new HashMap<>();
-        debugMap.put("request_method", request.getMethod());
-        debugMap.put("authorised", authorised);
-        debugMap.put("expected_permission", permissionKey + "=" + permissionValue);
+        boolean anyAuthorised = false;
+        for (Permission.Key permissionKey : anyPermissionKeys) {
+            final Map<String, Object> subDebugMap = new HashMap<>();
+            final boolean authorised = tokenPermissions.hasPermission(permissionKey, permissionValue);
+            anyAuthorised |= authorised;
 
-        if (!authorised) {
+            subDebugMap.put("request_method", request.getMethod());
+            subDebugMap.put("authorised", authorised);
+            subDebugMap.put("expected_permission", permissionKey + "=" + permissionValue);
+            debugMap.put("permission_" + permissionKey, subDebugMap);
+        }
+
+        if (!anyAuthorised) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         }
 
+        debugMap.put("resulting_authorisation", anyAuthorised);
         LOGGER.debugRequest(request, "CRUDAuthenticationInterceptor handled request", debugMap);
-        return authorised;
+        return anyAuthorised;
     }
 
     @Override
@@ -87,11 +148,13 @@ public class CRUDAuthenticationInterceptor implements HandlerInterceptor {
             InterceptorHelper.storeTokenPermissionsInRequest(null, request);
         }
     }
-    
+
     private boolean ignoreRequest(HttpServletRequest request) {
         return ignoredHttpMethods.contains(request.getMethod()) ||
-                (this.ignoreAPIKeyRequests && SecurityConstants.API_KEY_IDENTITY_TYPE.equals(AuthorisationUtil.getAuthorisedIdentityType(request)));
+                (this.ignoreAPIKeyRequests && SecurityConstants.API_KEY_IDENTITY_TYPE
+                        .equals(AuthorisationUtil.getAuthorisedIdentityType(request)));
     }
+
     /**
      * Get the token permissions object from the request or create one (and store it
      * in the request) if there is not one

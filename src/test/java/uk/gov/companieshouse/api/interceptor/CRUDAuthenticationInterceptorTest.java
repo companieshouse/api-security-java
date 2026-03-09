@@ -12,21 +12,27 @@ import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
+import java.util.Arrays;
 import java.util.Optional;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.context.TestPropertySource;
 
 import uk.gov.companieshouse.api.util.security.EricConstants;
 import uk.gov.companieshouse.api.util.security.InvalidTokenPermissionException;
@@ -42,9 +48,11 @@ class CRUDAuthenticationInterceptorTest {
     private static final Object HANDLER = null;
 
     private final Permission.Key permissionKey = Permission.Key.USER_PROFILE;
+    private final Permission.Key otherPermissionKey = Permission.Key.COMPANY_ACCOUNTS;
 
     @Spy
-    private CRUDAuthenticationInterceptor interceptor = new CRUDAuthenticationInterceptor(permissionKey, "IGNORED", "OTHER");
+    private CRUDAuthenticationInterceptor interceptor = new CRUDAuthenticationInterceptor(permissionKey, "IGNORED",
+            "OTHER");
 
     @Mock
     private HttpServletRequest request;
@@ -75,7 +83,7 @@ class CRUDAuthenticationInterceptorTest {
         when(request.getMethod()).thenReturn("POST");
 
         assertTrue(interceptor.preHandle(request, response, HANDLER));
-        
+
         verifyNoInteractions(response);
         verify(request).setAttribute(eq("token_permissions"), tokenPermissionsCaptor.capture());
         TokenPermissions tokenPermissions = tokenPermissionsCaptor.getValue();
@@ -358,6 +366,59 @@ class CRUDAuthenticationInterceptorTest {
         assertTrue(customInterceptor.preHandle(request, response, HANDLER));
 
         verifyNoMoreInteractions(request);
+    }
+
+    @Nested
+    class MultiplePermissionKeysTests {
+        private CRUDAuthenticationInterceptor spyInterceptor;
+        @BeforeEach
+        void setup() {
+            spyInterceptor = org.mockito.Mockito.spy(
+                    new CRUDAuthenticationInterceptor(Arrays.asList(permissionKey, otherPermissionKey)));
+            doReturn(Optional.of(tokenPermissions)).when(spyInterceptor).getTokenPermissionsFromRequest(request);
+            when(request.getMethod()).thenReturn("GET");
+            }
+
+        @Test
+        @DisplayName("Test multiple permission keys: all are granted allows access")
+        void preHandleMultiplePermissionKeys_allAuthorised() throws Exception {
+
+            when(tokenPermissions.hasPermission(permissionKey, Value.READ)).thenReturn(true);
+            when(tokenPermissions.hasPermission(otherPermissionKey, Value.READ)).thenReturn(true);
+
+            assertTrue(spyInterceptor.preHandle(request, response, HANDLER));
+            verifyNoInteractions(response);
+            verifyNoMoreInteractions(tokenPermissions);
+        }
+
+        @CsvSource({
+                "true, false",
+                "false, true"
+        })
+        @ParameterizedTest
+        @DisplayName("Test multiple permission keys: at least one granted allows access")
+        void preHandleMultiplePermissionKeys_anyAuthorised(boolean firstPermission, boolean secondPermission)
+                throws Exception {
+
+            when(tokenPermissions.hasPermission(permissionKey, Value.READ)).thenReturn(firstPermission);
+            when(tokenPermissions.hasPermission(otherPermissionKey, Value.READ)).thenReturn(secondPermission);
+
+            assertTrue(spyInterceptor.preHandle(request, response, HANDLER));
+            verifyNoInteractions(response);
+            verifyNoMoreInteractions(tokenPermissions);
+        }
+
+        @Test
+        @DisplayName("Test multiple permission keys: none granted denies access")
+        void preHandleMultiplePermissionKeys_noneAuthorised() throws Exception {
+
+            when(tokenPermissions.hasPermission(permissionKey, Value.READ)).thenReturn(false);
+            when(tokenPermissions.hasPermission(otherPermissionKey, Value.READ)).thenReturn(false);
+
+            assertFalse(spyInterceptor.preHandle(request, response, HANDLER));
+            verify(response).setStatus(401);
+            verifyNoMoreInteractions(tokenPermissions);
+        }
     }
 
     private void setupTokenPermissions() {
