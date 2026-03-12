@@ -37,15 +37,6 @@
         <spring-core.version>6.2.11</spring-core.version>
         <jakarta.servlet-api.version>6.1.0</jakarta.servlet-api.version>
         <commons-collections4.version>4.4</commons-collections4.version>
-        <!-- Sonar -->
-        <sonar.projectName>api-security-java</sonar.projectName>
-        <!--suppress UnresolvedMavenProperty -->
-        <sonar.host.url>${CODE_ANALYSIS_HOST_URL}</sonar.host.url>
-        <!--suppress UnresolvedMavenProperty -->
-        <sonar.token>${CODE_ANALYSIS_TOKEN}</sonar.token>
-        <sonar.login/>
-        <sonar.password/>
-        <sonar.projectKey>uk.gov.companieshouse:api-security-java</sonar.projectKey>
         <!--MSAL depedencies -->
         <nimbus-jose-jwt.version>10.6</nimbus-jose-jwt.version>
         <oauth2-oidc-sdk.version>11.30.1</oauth2-oidc-sdk.version>
