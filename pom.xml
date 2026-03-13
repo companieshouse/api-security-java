@@ -66,6 +66,27 @@
                 <artifactId>log4j-to-slf4j</artifactId>
                 <version>${log4j2.version}</version>
             </dependency>
+
+
+            <!-- Override vulnerable Tomcat version -->
+            <dependency>
+                <groupId>org.apache.tomcat.embed</groupId>
+                <artifactId>tomcat-embed-core</artifactId>
+                <version>10.1.52</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.tomcat.embed</groupId>
+                <artifactId>tomcat-embed-websocket</artifactId>
+                <version>10.1.52</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.tomcat.embed</groupId>
+                <artifactId>tomcat-embed-el</artifactId>
+                <version>10.1.52</version>
+            </dependency>
+
         </dependencies>
     </dependencyManagement>
    
