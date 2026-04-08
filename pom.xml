@@ -19,9 +19,9 @@
         <gson.version>2.13.2</gson.version>
         <commons-lang3.version>3.19.0</commons-lang3.version>
         <maven-jar-plugin.version>2.4</maven-jar-plugin.version>
-        <api-sdk-java.version>6.4.8</api-sdk-java.version>
-        <structured-logging.version>3.0.42</structured-logging.version>
-        <api-sdk-manager-java-library.version>3.0.13</api-sdk-manager-java-library.version>
+        <api-sdk-java.version>6.6.13</api-sdk-java.version>
+        <structured-logging.version>3.0.52</structured-logging.version>
+        <api-sdk-manager-java-library.version>3.0.18</api-sdk-manager-java-library.version>
 
         <!-- Maven -->
         <maven-surefire-plugin.version>3.5.4</maven-surefire-plugin.version>
@@ -32,8 +32,8 @@
         <source-level>21</source-level>
         <target-level>21</target-level>
         <!-- Spring -->
-        <spring-boot-dependencies.version>3.5.7</spring-boot-dependencies.version>
-        <spring-boot-maven-plugin.version>3.4.9</spring-boot-maven-plugin.version>
+        <spring-boot-dependencies.version>3.5.13</spring-boot-dependencies.version>
+        <spring-boot-maven-plugin.version>3.5.13</spring-boot-maven-plugin.version>
         <spring-core.version>6.2.11</spring-core.version>
         <jakarta.servlet-api.version>6.1.0</jakarta.servlet-api.version>
         <commons-collections4.version>4.4</commons-collections4.version>
@@ -67,26 +67,6 @@
                 <version>${log4j2.version}</version>
             </dependency>
 
-
-            <!-- Override vulnerable Tomcat version -->
-            <dependency>
-                <groupId>org.apache.tomcat.embed</groupId>
-                <artifactId>tomcat-embed-core</artifactId>
-                <version>10.1.52</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.apache.tomcat.embed</groupId>
-                <artifactId>tomcat-embed-websocket</artifactId>
-                <version>10.1.52</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.apache.tomcat.embed</groupId>
-                <artifactId>tomcat-embed-el</artifactId>
-                <version>10.1.52</version>
-            </dependency>
-
         </dependencies>
     </dependencyManagement>
    
@@ -95,11 +75,6 @@
             <groupId>org.springframework</groupId>
             <artifactId>spring-webmvc</artifactId>
             <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-core</artifactId>
-            <version>${spring-core.version}</version>
         </dependency>
 
         <dependency>
