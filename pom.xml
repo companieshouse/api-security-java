@@ -9,7 +9,7 @@
     <parent>
         <groupId>uk.gov.companieshouse</groupId>
         <artifactId>companies-house-parent</artifactId>
-        <version>2.1.12</version>
+        <version>2.1.14</version>
 	<relativePath/>
     </parent>
 
@@ -21,7 +21,7 @@
         <maven-jar-plugin.version>2.4</maven-jar-plugin.version>
         <api-sdk-java.version>6.6.13</api-sdk-java.version>
         <structured-logging.version>3.0.52</structured-logging.version>
-        <api-sdk-manager-java-library.version>3.0.18</api-sdk-manager-java-library.version>
+        <api-sdk-manager-java-library.version>3.0.22</api-sdk-manager-java-library.version>
 
         <!-- Maven -->
         <maven-surefire-plugin.version>3.5.4</maven-surefire-plugin.version>
@@ -32,9 +32,9 @@
         <source-level>21</source-level>
         <target-level>21</target-level>
         <!-- Spring -->
-        <spring-boot-dependencies.version>3.5.13</spring-boot-dependencies.version>
-        <spring-boot-maven-plugin.version>3.5.13</spring-boot-maven-plugin.version>
-        <spring-core.version>6.2.11</spring-core.version>
+        <spring-boot-dependencies.version>3.5.14</spring-boot-dependencies.version>
+        <spring-boot-maven-plugin.version>3.5.14</spring-boot-maven-plugin.version>
+        <spring-core.version>6.2.18</spring-core.version>
         <jakarta.servlet-api.version>6.1.0</jakarta.servlet-api.version>
         <commons-collections4.version>4.4</commons-collections4.version>
         <!--MSAL depedencies -->
@@ -66,7 +66,6 @@
                 <artifactId>log4j-to-slf4j</artifactId>
                 <version>${log4j2.version}</version>
             </dependency>
-
         </dependencies>
     </dependencyManagement>
    
@@ -74,6 +73,7 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-webmvc</artifactId>
+            <version>${spring-core.version}</version>
             <optional>true</optional>
         </dependency>
 
