@@ -19,7 +19,7 @@ import java.util.Optional;
 import java.util.stream.Stream;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.apache.http.HttpStatus;
+import org.springframework.http.HttpStatus;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -165,7 +165,7 @@ class MappablePermissionsInterceptorTest {
             verifyNoInteractions(response);
         }
         else {
-            verify(response).setStatus(HttpStatus.SC_UNAUTHORIZED);
+            verify(response).setStatus(HttpStatus.UNAUTHORIZED.value());
         }
         verifyNoMoreInteractions(tokenPermissions);
     }
