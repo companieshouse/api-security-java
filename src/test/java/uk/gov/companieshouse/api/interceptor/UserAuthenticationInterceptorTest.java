@@ -48,8 +48,6 @@ class UserAuthenticationInterceptorTest {
         List<String> methods = Arrays.asList("GET");
         List<String> types = Arrays.asList("oauth2");
         userAuthenticationInterceptor = new UserAuthenticationInterceptor(methods, types, internalUserInterceptor);
-
-        MockitoAnnotations.initMocks(this);
     }
 
     @Test
