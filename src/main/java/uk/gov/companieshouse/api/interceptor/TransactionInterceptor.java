@@ -36,6 +36,11 @@ public class TransactionInterceptor implements HandlerInterceptor {
         logger = LoggerFactory.getLogger(loggingNamespace);
     }
 
+    // Package-private to allow injection in tests when constructing via the named constructor.
+    void setApiClientService(ApiClientService apiClientService) {
+        this.apiClientService = apiClientService;
+    }
+
     /**
      * Pre handle method to validate the request before it reaches the controller. Check if the url
      * has an existing transaction and save it in the request's attribute. If transaction is not
