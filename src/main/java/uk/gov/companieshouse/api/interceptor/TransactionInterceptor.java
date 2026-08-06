@@ -24,6 +24,7 @@ public class TransactionInterceptor implements HandlerInterceptor {
 
     private final Logger LOGGER;
 
+    @SuppressWarnings("java:S6813") // Field injection retained for backwards compatibility with consuming services that construct via new TransactionInterceptor(loggingNamespace) in @Bean methods.
     @Autowired
     private ApiClientService apiClientService;
 
