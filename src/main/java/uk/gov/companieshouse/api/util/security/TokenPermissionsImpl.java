@@ -23,7 +23,7 @@ import uk.gov.companieshouse.logging.LoggerFactory;
 public class TokenPermissionsImpl implements TokenPermissions {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(String.valueOf(TokenPermissionsImpl.class));
-    private static final Pattern PERMISSION_LIST_PATTERN = Pattern.compile("^\\w+=\\w+(?:,\\w+)*(?: \\w+=\\w+(?:,\\w+)*)*$");
+    private static final Pattern PERMISSION_LIST_PATTERN = Pattern.compile("^\\w++=\\w++(?:,\\w++)*+(?: \\w++=\\w++(?:,\\w++)*+)*+$");
 
     private final Map<String, List<String>> permissions;
 
