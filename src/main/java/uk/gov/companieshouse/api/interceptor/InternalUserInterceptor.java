@@ -19,9 +19,10 @@ import uk.gov.companieshouse.logging.LoggerFactory;
  * the CH API key is valid. The request is also checked to see if the user is in a role which can
  * make internal calls.
  */
+@SuppressWarnings("java:S6829") // @Autowired not needed
 @Component
 public class InternalUserInterceptor implements HandlerInterceptor {
-    
+
     private final Logger LOG;
 
     public InternalUserInterceptor() {
@@ -33,9 +34,9 @@ public class InternalUserInterceptor implements HandlerInterceptor {
     }
 
     @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response,  Object handler) throws IOException {   
-        
-        final String authorisedUser = AuthorisationUtil.getAuthorisedIdentity(request); 
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response,  Object handler) throws IOException {
+
+        final String authorisedUser = AuthorisationUtil.getAuthorisedIdentity(request);
         if (authorisedUser == null) {
             LOG.debugRequest(request, "no authorised identity", null);
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
@@ -48,14 +49,14 @@ public class InternalUserInterceptor implements HandlerInterceptor {
             response.setStatus(HttpServletResponse.SC_FORBIDDEN);
             return false;
         }
-        
+
         boolean hasInternalUserRole = AuthorisationUtil.hasInternalUserRole(request);
         if ( ! hasInternalUserRole) {
             LOG.debugRequest(request, "user does not have internal user privileges ", null);
             response.setStatus(HttpServletResponse.SC_FORBIDDEN);
             return false;
         }
-        
+
         LOG.debugRequest(request, "authorised as api key (internal user)", null);
         return true;
     }
