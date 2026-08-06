@@ -22,16 +22,16 @@ import uk.gov.companieshouse.api.util.security.SecurityConstants;
 @ExtendWith(MockitoExtension.class)
 @TestInstance(Lifecycle.PER_CLASS)
 class RolePermissionInterceptorTest {
-    
+
     private static final Object NO_HANDLER = null;
-    
+
     private MockHttpServletRequest mockRequest = new MockHttpServletRequest();
 
     @Mock
     private HttpServletResponse mockResponse;
-    
+
     private RolePermissionInterceptor roleInterceptor;
-    
+
     @BeforeEach
     void setup() {
         roleInterceptor = new RolePermissionInterceptor("/admin/search");
@@ -40,7 +40,7 @@ class RolePermissionInterceptorTest {
 
     @Test
     @DisplayName("Test the Handler allows a user with the correct set of role permissions")
-    public void testUserWithCorrectPriviledges() throws IOException {
+    void testUserWithCorrectPriviledges() throws IOException {
 
         mockRequest.addHeader(EricConstants.ERIC_IDENTITY, "test data");
         mockRequest.addHeader(EricConstants.ERIC_IDENTITY_TYPE, "oauth2");
@@ -51,7 +51,7 @@ class RolePermissionInterceptorTest {
 
     @Test
     @DisplayName("Test the Handler stops a user without /admin/search role")
-    public void testUserWithNoAdminSearchRole() throws IOException {
+    void testUserWithNoAdminSearchRole() throws IOException {
         mockRequest.addHeader(EricConstants.ERIC_IDENTITY, "test data");
         mockRequest.addHeader(EricConstants.ERIC_IDENTITY_TYPE, "oauth2");
         mockRequest.addHeader(EricConstants.ERIC_AUTHORISED_ROLES, "/admin/roles /admin/user/search");
@@ -61,7 +61,7 @@ class RolePermissionInterceptorTest {
 
     @Test
     @DisplayName("Test the Handler stops a user without the correct identity type")
-    public void testUserWithWrongIdentityType() throws IOException {
+    void testUserWithWrongIdentityType() throws IOException {
 
         mockRequest.addHeader(EricConstants.ERIC_IDENTITY, "test data");
         mockRequest.addHeader(EricConstants.ERIC_IDENTITY_TYPE, "key");
