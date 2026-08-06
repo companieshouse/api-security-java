@@ -23,7 +23,7 @@ import uk.gov.companieshouse.api.model.transaction.TransactionStatus;
 class ClosedTransactionInterceptorTest {
 
     @InjectMocks
-    private ClosedTransactionInterceptor transactionInterceptor;
+    private ClosedTransactionInterceptor transactionInterceptor = new ClosedTransactionInterceptor();
 
     @Mock
     private HttpServletRequest httpServletRequestMock;

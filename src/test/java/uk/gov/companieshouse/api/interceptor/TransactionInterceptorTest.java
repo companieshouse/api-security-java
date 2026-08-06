@@ -143,7 +143,7 @@ class TransactionInterceptorTest {
 
     @Test
     @DisplayName("Tests the interceptor returns false and sets 500 on IOException")
-    void testPreHandleIOException() throws URIValidationException, IOException {
+    void testPreHandleIOException() throws IOException {
         when(apiClientServiceMock.getApiClient(anyString())).thenThrow(new IOException("io error"));
 
         assertFalse(transactionInterceptor
