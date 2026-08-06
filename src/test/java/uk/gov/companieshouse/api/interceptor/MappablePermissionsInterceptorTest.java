@@ -103,9 +103,9 @@ class MappablePermissionsInterceptorTest {
         verify(request).setAttribute(eq("token_permissions"), tokenPermissionsCaptor.capture());
         verify(response).setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 
-        final TokenPermissions tokenPermissions = tokenPermissionsCaptor.getValue();
+        final TokenPermissions capturedTokenPermissions = tokenPermissionsCaptor.getValue();
 
-        assertThat(tokenPermissions, isA(TokenPermissionsImpl.class));
+        assertThat(capturedTokenPermissions, isA(TokenPermissionsImpl.class));
 
     }
 
@@ -122,9 +122,9 @@ class MappablePermissionsInterceptorTest {
         verifyNoInteractions(response);
         verify(request).setAttribute(eq("token_permissions"), tokenPermissionsCaptor.capture());
 
-        final TokenPermissions tokenPermissions = tokenPermissionsCaptor.getValue();
+        final TokenPermissions capturedTokenPermissions = tokenPermissionsCaptor.getValue();
 
-        assertThat(tokenPermissions, isA(TokenPermissionsImpl.class));
+        assertThat(capturedTokenPermissions, isA(TokenPermissionsImpl.class));
     }
 
     @Test
@@ -141,9 +141,9 @@ class MappablePermissionsInterceptorTest {
         verifyNoInteractions(response);
         verify(request).setAttribute(eq("token_permissions"), tokenPermissionsCaptor.capture());
 
-        final TokenPermissions tokenPermissions = tokenPermissionsCaptor.getValue();
+        final TokenPermissions capturedTokenPermissions = tokenPermissionsCaptor.getValue();
 
-        assertThat(tokenPermissions, isA(TokenPermissionsImpl.class));
+        assertThat(capturedTokenPermissions, isA(TokenPermissionsImpl.class));
     }
 
     @ParameterizedTest(name = "{index}: preHandle with a {0} request with validity {2}")
