@@ -67,7 +67,7 @@ class CRUDAuthenticationInterceptorTest {
 
     @Test
     @DisplayName("Test preHandle when TokenPermissions is not present in request and the header is invalid")
-    void preHandleMissingTokenPermissionsInvalidHeader() throws Exception {
+    void preHandleMissingTokenPermissionsInvalidHeader() {
         when(request.getHeader("ERIC-Authorised-Token-Permissions")).thenReturn("invalid");
 
         assertThrows(IllegalStateException.class, () -> interceptor.preHandle(request, response, HANDLER));
@@ -85,10 +85,10 @@ class CRUDAuthenticationInterceptorTest {
 
         verifyNoInteractions(response);
         verify(request).setAttribute(eq("token_permissions"), tokenPermissionsCaptor.capture());
-        TokenPermissions tokenPermissions = tokenPermissionsCaptor.getValue();
+        TokenPermissions capturedTokenPermissions = tokenPermissionsCaptor.getValue();
 
-        assertNotNull(tokenPermissions);
-        assertTrue(tokenPermissions instanceof TokenPermissionsImpl);
+        assertNotNull(capturedTokenPermissions);
+        assertTrue(capturedTokenPermissions instanceof TokenPermissionsImpl);
     }
 
     @Test
