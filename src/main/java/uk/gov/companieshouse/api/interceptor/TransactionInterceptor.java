@@ -22,18 +22,18 @@ import uk.gov.companieshouse.sdk.manager.ApiSdkManager;
 
 public class TransactionInterceptor implements HandlerInterceptor {
 
-    private final Logger LOGGER;
+    private final Logger logger;
 
     @SuppressWarnings("java:S6813") // Field injection retained for backwards compatibility with consuming services that construct via new TransactionInterceptor(loggingNamespace) in @Bean methods.
     @Autowired
     private ApiClientService apiClientService;
 
     public TransactionInterceptor() {
-        LOGGER = LoggerFactory.getLogger(String.valueOf(TransactionInterceptor.class));
+        logger = LoggerFactory.getLogger(String.valueOf(TransactionInterceptor.class));
     }
 
     public TransactionInterceptor(String loggingNamespace) {
-        LOGGER = LoggerFactory.getLogger(loggingNamespace);
+        logger = LoggerFactory.getLogger(loggingNamespace);
     }
 
     /**
@@ -67,19 +67,19 @@ public class TransactionInterceptor implements HandlerInterceptor {
 
         } catch (HttpClientErrorException e) {
 
-            LOGGER.errorRequest(request, e, debugMap);
+            logger.errorRequest(request, e, debugMap);
             response.setStatus(e.getStatusCode().value());
             return false;
 
         } catch (ApiErrorResponseException e) {
 
-            LOGGER.errorRequest(request, e, debugMap);
+            logger.errorRequest(request, e, debugMap);
             response.setStatus(e.getStatusCode());
             return false;
 
         } catch (URIValidationException | IOException e) {
 
-            LOGGER.errorRequest(request, e, debugMap);
+            logger.errorRequest(request, e, debugMap);
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
             return false;
         }
