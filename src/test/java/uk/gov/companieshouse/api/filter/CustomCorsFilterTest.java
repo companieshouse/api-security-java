@@ -121,6 +121,6 @@ class CustomCorsFilterTest {
 
     private void setupCorsRequest(String method) {
         when(request.getHeader("Origin")).thenReturn("http://example.com");
-        when(request.getHeader("Access-Control-Request-Method")).thenReturn("GET");
+        when(request.getHeader("Access-Control-Request-Method")).thenReturn(method);
     }
 }
