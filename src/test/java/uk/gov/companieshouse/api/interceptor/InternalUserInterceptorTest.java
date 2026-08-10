@@ -37,7 +37,7 @@ class InternalUserInterceptorTest {
 
     @Test
     @DisplayName("Test that Handler allows a user with the correct privilege through")
-    void testUserHasCorrectPriviledges() throws IOException {
+    void testUserHasCorrectPrivileges() throws IOException {
         doReturn("test user").when(mockRequest).getHeader(EricConstants.ERIC_IDENTITY);
         doReturn(SecurityConstants.API_KEY_IDENTITY_TYPE).when(mockRequest).getHeader(EricConstants.ERIC_IDENTITY_TYPE);
         doReturn(SecurityConstants.INTERNAL_USER_ROLE).when(mockRequest).getHeader(EricConstants.ERIC_AUTHORISED_KEY_ROLES);
@@ -60,7 +60,7 @@ class InternalUserInterceptorTest {
 
     @Test
     @DisplayName("Test that Handler stops a request when API user does not have internal privileges")
-    void testNoInternalPriviledges() throws IOException {
+    void testNoInternalPrivileges() throws IOException {
         doReturn("test user").when(mockRequest).getHeader(EricConstants.ERIC_IDENTITY);
         doReturn(SecurityConstants.API_KEY_IDENTITY_TYPE).when(mockRequest).getHeader(EricConstants.ERIC_IDENTITY_TYPE);
         doReturn("Yellow").when(mockRequest).getHeader(EricConstants.ERIC_AUTHORISED_KEY_ROLES);

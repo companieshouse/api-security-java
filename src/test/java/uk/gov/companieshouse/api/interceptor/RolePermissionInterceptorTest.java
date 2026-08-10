@@ -40,7 +40,7 @@ class RolePermissionInterceptorTest {
 
     @Test
     @DisplayName("Test the Handler allows a user with the correct set of role permissions")
-    void testUserWithCorrectPriviledges() throws IOException {
+    void testUserWithCorrectPrivileges() throws IOException {
 
         mockRequest.addHeader(EricConstants.ERIC_IDENTITY, "test data");
         mockRequest.addHeader(EricConstants.ERIC_IDENTITY_TYPE, "oauth2");
