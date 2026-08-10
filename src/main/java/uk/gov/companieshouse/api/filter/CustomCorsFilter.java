@@ -17,9 +17,9 @@ import jakarta.servlet.http.HttpServletResponse;
 public class CustomCorsFilter implements Filter {
 
     private List<String> externalMethods;
-    private String OPTIONS_METHOD = "OPTIONS";
-    private String ERIC_ALLOWED_ORIGIN = "ERIC-Allowed-Origin";
-    
+    private static final String OPTIONS_METHOD = "OPTIONS";
+    private static final String ERIC_ALLOWED_ORIGIN = "ERIC-Allowed-Origin";
+
     public CustomCorsFilter(List<String> externalMethods) {
         this.externalMethods = externalMethods;
     }

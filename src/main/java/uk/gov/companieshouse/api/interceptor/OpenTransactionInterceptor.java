@@ -12,15 +12,15 @@ import java.util.Map;
 
 public class OpenTransactionInterceptor implements HandlerInterceptor {
 
-    private final Logger LOGGER;
+    private final Logger logger;
 
 
     public OpenTransactionInterceptor() {
-        LOGGER = LoggerFactory.getLogger(String.valueOf(OpenTransactionInterceptor.class));
+        logger = LoggerFactory.getLogger(String.valueOf(OpenTransactionInterceptor.class));
     }
 
     public OpenTransactionInterceptor(String loggingNamespace) {
-        LOGGER = LoggerFactory.getLogger(loggingNamespace);
+        logger = LoggerFactory.getLogger(loggingNamespace);
     }
     /**
      * Pre handle method to validate the request before it reaches the controller by checking if the
@@ -38,7 +38,7 @@ public class OpenTransactionInterceptor implements HandlerInterceptor {
             final Map<String, Object> debugMap = new HashMap<>();
             debugMap.put("request_method", request.getMethod());
 
-            LOGGER.errorRequest(request, "OpenTransactionInterceptor error: no open transaction available", debugMap);
+            logger.errorRequest(request, "OpenTransactionInterceptor error: no open transaction available", debugMap);
             response.setStatus(HttpServletResponse.SC_FORBIDDEN);
             return false;
         }

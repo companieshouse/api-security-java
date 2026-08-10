@@ -13,15 +13,15 @@ import uk.gov.companieshouse.logging.LoggerFactory;
 
 public class ClosedTransactionInterceptor implements HandlerInterceptor {
 
-    private final Logger LOGGER;
+    private final Logger logger;
 
 
     public ClosedTransactionInterceptor() {
-        LOGGER = LoggerFactory.getLogger(String.valueOf(ClosedTransactionInterceptor.class));
+        logger = LoggerFactory.getLogger(String.valueOf(ClosedTransactionInterceptor.class));
     }
 
     public ClosedTransactionInterceptor(String loggingNamespace) {
-        LOGGER = LoggerFactory.getLogger(loggingNamespace);
+        logger = LoggerFactory.getLogger(loggingNamespace);
     }
 
     /**
@@ -39,7 +39,7 @@ public class ClosedTransactionInterceptor implements HandlerInterceptor {
             final Map<String, Object> debugMap = new HashMap<>();
             debugMap.put("request_method", request.getMethod());
 
-            LOGGER.errorRequest(request, "ClosedTransactionInterceptor error: no closed transaction available", debugMap);
+            logger.errorRequest(request, "ClosedTransactionInterceptor error: no closed transaction available", debugMap);
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             return false;
         }

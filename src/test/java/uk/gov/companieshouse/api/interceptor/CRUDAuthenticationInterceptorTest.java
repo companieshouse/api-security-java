@@ -14,6 +14,7 @@ import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -26,7 +27,9 @@ import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
@@ -67,7 +70,7 @@ class CRUDAuthenticationInterceptorTest {
 
     @Test
     @DisplayName("Test preHandle when TokenPermissions is not present in request and the header is invalid")
-    void preHandleMissingTokenPermissionsInvalidHeader() throws Exception {
+    void preHandleMissingTokenPermissionsInvalidHeader() {
         when(request.getHeader("ERIC-Authorised-Token-Permissions")).thenReturn("invalid");
 
         assertThrows(IllegalStateException.class, () -> interceptor.preHandle(request, response, HANDLER));
@@ -85,88 +88,45 @@ class CRUDAuthenticationInterceptorTest {
 
         verifyNoInteractions(response);
         verify(request).setAttribute(eq("token_permissions"), tokenPermissionsCaptor.capture());
-        TokenPermissions tokenPermissions = tokenPermissionsCaptor.getValue();
+        TokenPermissions capturedTokenPermissions = tokenPermissionsCaptor.getValue();
 
-        assertNotNull(tokenPermissions);
-        assertTrue(tokenPermissions instanceof TokenPermissionsImpl);
+        assertNotNull(capturedTokenPermissions);
+        assertTrue(capturedTokenPermissions instanceof TokenPermissionsImpl);
     }
 
-    @Test
-    @DisplayName("Tests the interceptor with a valid POST request")
-    void preHandleAuthorisedPost() throws InvalidTokenPermissionException {
+    @ParameterizedTest(name = "authorised {0} requires {1}")
+    @MethodSource("crudMethodPermissions")
+    void preHandleAuthorisedMethods(final String httpMethod, final String requiredPermission)
+            throws InvalidTokenPermissionException {
         setupTokenPermissions();
-        when(request.getMethod()).thenReturn("POST");
-        final boolean authorised = true;
-        when(tokenPermissions.hasPermission(permissionKey, Value.CREATE)).thenReturn(authorised);
+        when(request.getMethod()).thenReturn(httpMethod);
+        when(tokenPermissions.hasPermission(permissionKey, requiredPermission)).thenReturn(true);
 
         assertTrue(interceptor.preHandle(request, response, HANDLER));
         verifyNoInteractions(response);
+        verify(tokenPermissions).hasPermission(permissionKey, requiredPermission);
         verifyNoMoreInteractions(tokenPermissions);
     }
 
-    @Test
-    @DisplayName("Tests the interceptor with an invalid POST request")
-    void preHandleUnauthorisedPost() throws InvalidTokenPermissionException {
+    @ParameterizedTest(name = "unauthorised {0} requires {1}")
+    @MethodSource("crudMethodPermissions")
+    void preHandleUnauthorisedMethods(final String httpMethod, final String requiredPermission)
+            throws InvalidTokenPermissionException {
         setupTokenPermissions();
-        when(request.getMethod()).thenReturn("POST");
-        final boolean authorised = false;
-        when(tokenPermissions.hasPermission(permissionKey, Value.CREATE)).thenReturn(authorised);
+        when(request.getMethod()).thenReturn(httpMethod);
+        when(tokenPermissions.hasPermission(permissionKey, requiredPermission)).thenReturn(false);
 
         assertFalse(interceptor.preHandle(request, response, HANDLER));
         verify(response).setStatus(401);
+        verify(tokenPermissions).hasPermission(permissionKey, requiredPermission);
         verifyNoMoreInteractions(tokenPermissions);
     }
 
-    @Test
-    @DisplayName("Tests the interceptor with a valid GET request")
-    void preHandleAuthorisedGet() throws InvalidTokenPermissionException {
-        setupTokenPermissions();
-        when(request.getMethod()).thenReturn("GET");
-        final boolean authorised = true;
-        when(tokenPermissions.hasPermission(permissionKey, Value.READ)).thenReturn(authorised);
-
-        assertTrue(interceptor.preHandle(request, response, HANDLER));
-        verifyNoInteractions(response);
-        verifyNoMoreInteractions(tokenPermissions);
-    }
-
-    @Test
-    @DisplayName("Tests the interceptor with an invalid GET request")
-    void preHandleUnauthorisedGet() throws InvalidTokenPermissionException {
-        setupTokenPermissions();
-        when(request.getMethod()).thenReturn("GET");
-        final boolean authorised = false;
-        when(tokenPermissions.hasPermission(permissionKey, Value.READ)).thenReturn(authorised);
-
-        assertFalse(interceptor.preHandle(request, response, HANDLER));
-        verify(response).setStatus(401);
-        verifyNoMoreInteractions(tokenPermissions);
-    }
-
-    @Test
-    @DisplayName("Tests the interceptor with a valid PUT request")
-    void preHandleAuthorisedPut() throws InvalidTokenPermissionException {
-        setupTokenPermissions();
-        when(request.getMethod()).thenReturn("PUT");
-        final boolean authorised = true;
-        when(tokenPermissions.hasPermission(permissionKey, Value.UPDATE)).thenReturn(authorised);
-
-        assertTrue(interceptor.preHandle(request, response, HANDLER));
-        verifyNoInteractions(response);
-        verifyNoMoreInteractions(tokenPermissions);
-    }
-
-    @Test
-    @DisplayName("Tests the interceptor with an invalid PUT request")
-    void preHandleUnauthorisedPut() throws InvalidTokenPermissionException {
-        setupTokenPermissions();
-        when(request.getMethod()).thenReturn("PUT");
-        final boolean authorised = false;
-        when(tokenPermissions.hasPermission(permissionKey, Value.UPDATE)).thenReturn(authorised);
-
-        assertFalse(interceptor.preHandle(request, response, HANDLER));
-        verify(response).setStatus(401);
-        verifyNoMoreInteractions(tokenPermissions);
+    private static Stream<Arguments> crudMethodPermissions() {
+        return Stream.of(
+                Arguments.of("POST", Value.CREATE),
+                Arguments.of("GET", Value.READ),
+                Arguments.of("PUT", Value.UPDATE));
     }
 
     @Test

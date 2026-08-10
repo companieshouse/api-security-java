@@ -16,15 +16,15 @@
     <properties>
         <!-- Dependency Versions -->
         <commons-beanutils.version>1.11.0</commons-beanutils.version>
-        <gson.version>2.13.2</gson.version>
-        <commons-lang3.version>3.19.0</commons-lang3.version>
-        <maven-jar-plugin.version>2.4</maven-jar-plugin.version>
-        <api-sdk-java.version>6.6.13</api-sdk-java.version>
-        <structured-logging.version>3.0.52</structured-logging.version>
-        <api-sdk-manager-java-library.version>3.0.22</api-sdk-manager-java-library.version>
+        <gson.version>2.14.0</gson.version>
+        <commons-lang3.version>3.20.0</commons-lang3.version>
+        <maven-jar-plugin.version>3.5.1</maven-jar-plugin.version>
+        <api-sdk-java.version>7.2.2</api-sdk-java.version>
+        <structured-logging.version>4.0.2</structured-logging.version>
+        <api-sdk-manager-java-library.version>3.0.28</api-sdk-manager-java-library.version>
 
         <!-- Maven -->
-        <maven-surefire-plugin.version>3.5.4</maven-surefire-plugin.version>
+        <maven-surefire-plugin.version>3.5.6</maven-surefire-plugin.version>
         <maven-shade-plugin.version>3.2.4</maven-shade-plugin.version>
         <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
 
@@ -32,21 +32,45 @@
         <source-level>21</source-level>
         <target-level>21</target-level>
         <!-- Spring -->
-        <spring-boot-dependencies.version>3.5.14</spring-boot-dependencies.version>
-        <spring-boot-maven-plugin.version>3.5.14</spring-boot-maven-plugin.version>
-        <spring-core.version>6.2.18</spring-core.version>
+        <spring-boot-dependencies.version>4.1.0</spring-boot-dependencies.version>
         <jakarta.servlet-api.version>6.1.0</jakarta.servlet-api.version>
-        <commons-collections4.version>4.4</commons-collections4.version>
+        <commons-collections4.version>4.5.0</commons-collections4.version>
         <!--MSAL depedencies -->
-        <nimbus-jose-jwt.version>10.6</nimbus-jose-jwt.version>
-        <oauth2-oidc-sdk.version>11.30.1</oauth2-oidc-sdk.version>
+        <nimbus-jose-jwt.version>10.9.1</nimbus-jose-jwt.version>
+        <oauth2-oidc-sdk.version>11.38.2</oauth2-oidc-sdk.version>
         <!-- Other Dependencies-->
-        <log4j2.version>2.25.3</log4j2.version>
+        <log4j2.version>2.26.1</log4j2.version>
 
     </properties>
 
     <dependencyManagement>
         <dependencies>
+
+            <dependency>
+                <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-bom</artifactId>
+                <version>${log4j2.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <!-- Jackson 2 multiple CVEs in earlier versions -->
+            <dependency>
+                <groupId>com.fasterxml.jackson</groupId>
+                <artifactId>jackson-bom</artifactId>
+                <version>2.22.1</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <!-- Jackson 3 multiple CVEs in earlier versions -->
+            <dependency>
+                <groupId>tools.jackson</groupId>
+                <artifactId>jackson-bom</artifactId>
+                <version>3.2.1</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-dependencies</artifactId>
@@ -54,26 +78,13 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
-
-            <!-- Hard overrides – these win over any parent -->
-            <dependency>
-                <groupId>org.apache.logging.log4j</groupId>
-                <artifactId>log4j-api</artifactId>
-                <version>${log4j2.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.logging.log4j</groupId>
-                <artifactId>log4j-to-slf4j</artifactId>
-                <version>${log4j2.version}</version>
-            </dependency>
         </dependencies>
     </dependencyManagement>
-   
+
     <dependencies>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-webmvc</artifactId>
-            <version>${spring-core.version}</version>
             <optional>true</optional>
         </dependency>
 

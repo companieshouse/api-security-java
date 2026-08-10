@@ -19,44 +19,45 @@ import uk.gov.companieshouse.logging.LoggerFactory;
  * the CH API key is valid. The request is also checked to see if the user is in a role which can
  * make internal calls.
  */
+@SuppressWarnings("java:S6829") // @Autowired not needed
 @Component
 public class InternalUserInterceptor implements HandlerInterceptor {
-    
-    private final Logger LOG;
+
+    private final Logger log;
 
     public InternalUserInterceptor() {
-        LOG = LoggerFactory.getLogger(String.valueOf(InternalUserInterceptor.class));
+        log = LoggerFactory.getLogger(String.valueOf(InternalUserInterceptor.class));
     }
 
     public InternalUserInterceptor(String loggingNamespace) {
-        LOG = LoggerFactory.getLogger(loggingNamespace);
+        log = LoggerFactory.getLogger(loggingNamespace);
     }
 
     @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response,  Object handler) throws IOException {   
-        
-        final String authorisedUser = AuthorisationUtil.getAuthorisedIdentity(request); 
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response,  Object handler) throws IOException {
+
+        final String authorisedUser = AuthorisationUtil.getAuthorisedIdentity(request);
         if (authorisedUser == null) {
-            LOG.debugRequest(request, "no authorised identity", null);
+            log.debugRequest(request, "no authorised identity", null);
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return false;
         }
 
         final String identityType = AuthorisationUtil.getAuthorisedIdentityType(request);
         if ( ! StringUtils.equals(identityType, SecurityConstants.API_KEY_IDENTITY_TYPE)) {
-            LOG.debugRequest(request, "invalid identity type [" + identityType + "]", null);
+            log.debugRequest(request, "invalid identity type [" + identityType + "]", null);
             response.setStatus(HttpServletResponse.SC_FORBIDDEN);
             return false;
         }
-        
+
         boolean hasInternalUserRole = AuthorisationUtil.hasInternalUserRole(request);
         if ( ! hasInternalUserRole) {
-            LOG.debugRequest(request, "user does not have internal user privileges ", null);
+            log.debugRequest(request, "user does not have internal user privileges ", null);
             response.setStatus(HttpServletResponse.SC_FORBIDDEN);
             return false;
         }
-        
-        LOG.debugRequest(request, "authorised as api key (internal user)", null);
+
+        log.debugRequest(request, "authorised as api key (internal user)", null);
         return true;
     }
 

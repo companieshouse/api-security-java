@@ -20,7 +20,7 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
-public class CustomCorsFilterTest {
+class CustomCorsFilterTest {
 
     private static final String OPTIONS_METHOD = "OPTIONS";
     private static final String ACCESS_CONTROL_ALLOW_ORIGIN = "Access-Control-Allow-Origin";
@@ -44,13 +44,13 @@ public class CustomCorsFilterTest {
     private List<String> externalMethods;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         externalMethods = List.of("GET", "POST");
         customCorsFilter = new CustomCorsFilter(externalMethods);
     }
 
     @Test
-    public void testDoFilterOptionsMethod() throws IOException, ServletException {
+    void testDoFilterOptionsMethod() throws IOException, ServletException {
         setupCorsRequest("OPTIONS");
         when(request.getMethod()).thenReturn(OPTIONS_METHOD);
 
@@ -64,7 +64,7 @@ public class CustomCorsFilterTest {
     }
 
     @Test
-    public void testDoFilterAllowedMethod() throws IOException, ServletException {
+    void testDoFilterAllowedMethod() throws IOException, ServletException {
         setupCorsRequest("GET");
         when(request.getMethod()).thenReturn("GET");
         when(request.getHeader(ERIC_ALLOWED_ORIGIN)).thenReturn("example.com");
@@ -76,7 +76,7 @@ public class CustomCorsFilterTest {
     }
 
     @Test
-    public void testDoFilterNotAllowedMethod() throws IOException, ServletException {
+    void testDoFilterNotAllowedMethod() throws IOException, ServletException {
         setupCorsRequest("DELETE");
         when(request.getMethod()).thenReturn("DELETE");
 
@@ -87,7 +87,7 @@ public class CustomCorsFilterTest {
     }
 
     @Test
-    public void testDoFilterMissingOriginHeader() throws IOException, ServletException {
+    void testDoFilterMissingOriginHeader() throws IOException, ServletException {
         setupCorsRequest("GET");
         when(request.getMethod()).thenReturn("GET");
         when(request.getHeader(ERIC_ALLOWED_ORIGIN)).thenReturn(null);
@@ -99,7 +99,7 @@ public class CustomCorsFilterTest {
     }
 
     @Test
-    public void testDoFilterEmptyOriginHeader() throws IOException, ServletException {
+    void testDoFilterEmptyOriginHeader() throws IOException, ServletException {
         setupCorsRequest("GET");
         when(request.getMethod()).thenReturn("GET");
         when(request.getHeader(ERIC_ALLOWED_ORIGIN)).thenReturn("");
@@ -111,7 +111,7 @@ public class CustomCorsFilterTest {
     }
 
     @Test
-    public void testDoFilterNonCorsRequest() throws IOException, ServletException {
+    void testDoFilterNonCorsRequest() throws IOException, ServletException {
         when(request.getMethod()).thenReturn("GET");
 
         customCorsFilter.doFilter(request, response, chain);
@@ -121,6 +121,6 @@ public class CustomCorsFilterTest {
 
     private void setupCorsRequest(String method) {
         when(request.getHeader("Origin")).thenReturn("http://example.com");
-        when(request.getHeader("Access-Control-Request-Method")).thenReturn("GET");
+        when(request.getHeader("Access-Control-Request-Method")).thenReturn(method);
     }
 }

@@ -19,7 +19,7 @@ import java.util.Optional;
 import java.util.stream.Stream;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.apache.http.HttpStatus;
+import org.springframework.http.HttpStatus;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -103,9 +103,9 @@ class MappablePermissionsInterceptorTest {
         verify(request).setAttribute(eq("token_permissions"), tokenPermissionsCaptor.capture());
         verify(response).setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 
-        final TokenPermissions tokenPermissions = tokenPermissionsCaptor.getValue();
+        final TokenPermissions capturedTokenPermissions = tokenPermissionsCaptor.getValue();
 
-        assertThat(tokenPermissions, isA(TokenPermissionsImpl.class));
+        assertThat(capturedTokenPermissions, isA(TokenPermissionsImpl.class));
 
     }
 
@@ -122,9 +122,9 @@ class MappablePermissionsInterceptorTest {
         verifyNoInteractions(response);
         verify(request).setAttribute(eq("token_permissions"), tokenPermissionsCaptor.capture());
 
-        final TokenPermissions tokenPermissions = tokenPermissionsCaptor.getValue();
+        final TokenPermissions capturedTokenPermissions = tokenPermissionsCaptor.getValue();
 
-        assertThat(tokenPermissions, isA(TokenPermissionsImpl.class));
+        assertThat(capturedTokenPermissions, isA(TokenPermissionsImpl.class));
     }
 
     @Test
@@ -141,9 +141,9 @@ class MappablePermissionsInterceptorTest {
         verifyNoInteractions(response);
         verify(request).setAttribute(eq("token_permissions"), tokenPermissionsCaptor.capture());
 
-        final TokenPermissions tokenPermissions = tokenPermissionsCaptor.getValue();
+        final TokenPermissions capturedTokenPermissions = tokenPermissionsCaptor.getValue();
 
-        assertThat(tokenPermissions, isA(TokenPermissionsImpl.class));
+        assertThat(capturedTokenPermissions, isA(TokenPermissionsImpl.class));
     }
 
     @ParameterizedTest(name = "{index}: preHandle with a {0} request with validity {2}")
@@ -165,7 +165,7 @@ class MappablePermissionsInterceptorTest {
             verifyNoInteractions(response);
         }
         else {
-            verify(response).setStatus(HttpStatus.SC_UNAUTHORIZED);
+            verify(response).setStatus(HttpStatus.UNAUTHORIZED.value());
         }
         verifyNoMoreInteractions(tokenPermissions);
     }

@@ -23,7 +23,7 @@ import uk.gov.companieshouse.logging.LoggerFactory;
 public class TokenPermissionsImpl implements TokenPermissions {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(String.valueOf(TokenPermissionsImpl.class));
-    private static final Pattern PERMISSION_LIST_PATTERN = Pattern.compile("^\\w+=\\w+(,\\w+)*( \\w+=\\w+(,\\w+)*)*$");
+    private static final Pattern PERMISSION_LIST_PATTERN = Pattern.compile("^\\w++=\\w++(?:,\\w++)*+(?: \\w++=\\w++(?:,\\w++)*+)*+$");
 
     private final Map<String, List<String>> permissions;
 
@@ -49,16 +49,16 @@ public class TokenPermissionsImpl implements TokenPermissions {
     }
 
     /**
-     * The ERIC token permission is of the format: 
+     * The ERIC token permission is of the format:
      *       "key1=valueA key2=valueB key3=valueC,valueD,valueE"
      * i.e. space separated key value pairs which themselves are separated by "=".
      * values can also be split on a comma so we end up with an array of values per key
-     * 
+     *
      * The example value above becomes:
      *       "key1" : ["valueA"],
      *       "key2" : ["valueB"],
      *       "key3" : ["valueC", "valueD", "valueE"]
-     * 
+     *
      * @param allPermissions
      * @return
      */

@@ -19,7 +19,6 @@ import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import uk.gov.companieshouse.api.util.security.EricConstants;
@@ -48,8 +47,6 @@ class UserAuthenticationInterceptorTest {
         List<String> methods = Arrays.asList("GET");
         List<String> types = Arrays.asList("oauth2");
         userAuthenticationInterceptor = new UserAuthenticationInterceptor(methods, types, internalUserInterceptor);
-
-        MockitoAnnotations.initMocks(this);
     }
 
     @Test
