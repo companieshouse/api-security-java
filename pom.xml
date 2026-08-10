@@ -20,7 +20,7 @@
         <commons-lang3.version>3.20.0</commons-lang3.version>
         <maven-jar-plugin.version>2.4</maven-jar-plugin.version>
         <api-sdk-java.version>7.2.2</api-sdk-java.version>
-        <structured-logging.version>4.0.1</structured-logging.version>
+        <structured-logging.version>4.0.2</structured-logging.version>
         <api-sdk-manager-java-library.version>3.0.28</api-sdk-manager-java-library.version>
 
         <!-- Maven -->
