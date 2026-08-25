@@ -181,107 +181,31 @@ class CRUDAuthenticationInterceptorTest {
         verifyNoMoreInteractions(tokenPermissions);
     }
 
-    @Test
-    @DisplayName("Tests the interceptor with a valid HEAD request")
-    void preHandleAuthorisedHead() throws InvalidTokenPermissionException {
+    @ParameterizedTest(name = "{0} request authorised={1}")
+    @CsvSource({
+            "HEAD, true",
+            "HEAD, false",
+            "CONNECT, true",
+            "CONNECT, false",
+            "OPTIONS, true",
+            "OPTIONS, false",
+            "TRACE, true",
+            "TRACE, false"
+    })
+    @DisplayName("Tests the interceptor with HEAD/CONNECT/OPTIONS/TRACE requests")
+    void preHandleReadBasedMethods(final String httpMethod, final boolean authorised)
+            throws InvalidTokenPermissionException {
         setupTokenPermissions();
-        when(request.getMethod()).thenReturn("HEAD");
-        final boolean authorised = true;
+        when(request.getMethod()).thenReturn(httpMethod);
         when(tokenPermissions.hasPermission(permissionKey, Value.READ)).thenReturn(authorised);
 
-        assertTrue(interceptor.preHandle(request, response, HANDLER));
-        verifyNoInteractions(response);
-        verifyNoMoreInteractions(tokenPermissions);
-    }
-
-    @Test
-    @DisplayName("Tests the interceptor with an invalid HEAD request")
-    void preHandleUnauthorisedHead() throws InvalidTokenPermissionException {
-        setupTokenPermissions();
-        when(request.getMethod()).thenReturn("HEAD");
-        final boolean authorised = false;
-        when(tokenPermissions.hasPermission(permissionKey, Value.READ)).thenReturn(authorised);
-
-        assertFalse(interceptor.preHandle(request, response, HANDLER));
-        verify(response).setStatus(401);
-        verifyNoMoreInteractions(tokenPermissions);
-    }
-
-    @Test
-    @DisplayName("Tests the interceptor with a valid CONNECT request")
-    void preHandleAuthorisedConnect() throws InvalidTokenPermissionException {
-        setupTokenPermissions();
-        when(request.getMethod()).thenReturn("CONNECT");
-        final boolean authorised = true;
-        when(tokenPermissions.hasPermission(permissionKey, Value.READ)).thenReturn(authorised);
-
-        assertTrue(interceptor.preHandle(request, response, HANDLER));
-        verifyNoInteractions(response);
-        verifyNoMoreInteractions(tokenPermissions);
-    }
-
-    @Test
-    @DisplayName("Tests the interceptor with an invalid CONNECT request")
-    void preHandleUnauthorisedConnect() throws InvalidTokenPermissionException {
-        setupTokenPermissions();
-        when(request.getMethod()).thenReturn("CONNECT");
-        final boolean authorised = false;
-        when(tokenPermissions.hasPermission(permissionKey, Value.READ)).thenReturn(authorised);
-
-        assertFalse(interceptor.preHandle(request, response, HANDLER));
-        verify(response).setStatus(401);
-        verifyNoMoreInteractions(tokenPermissions);
-    }
-
-    @Test
-    @DisplayName("Tests the interceptor with a valid OPTIONS request")
-    void preHandleAuthorisedOptions() throws InvalidTokenPermissionException {
-        setupTokenPermissions();
-        when(request.getMethod()).thenReturn("OPTIONS");
-        final boolean authorised = true;
-        when(tokenPermissions.hasPermission(permissionKey, Value.READ)).thenReturn(authorised);
-
-        assertTrue(interceptor.preHandle(request, response, HANDLER));
-        verifyNoInteractions(response);
-        verifyNoMoreInteractions(tokenPermissions);
-    }
-
-    @Test
-    @DisplayName("Tests the interceptor with an invalid OPTIONS request")
-    void preHandleUnauthorisedOptions() throws InvalidTokenPermissionException {
-        setupTokenPermissions();
-        when(request.getMethod()).thenReturn("OPTIONS");
-        final boolean authorised = false;
-        when(tokenPermissions.hasPermission(permissionKey, Value.READ)).thenReturn(authorised);
-
-        assertFalse(interceptor.preHandle(request, response, HANDLER));
-        verify(response).setStatus(401);
-        verifyNoMoreInteractions(tokenPermissions);
-    }
-
-    @Test
-    @DisplayName("Tests the interceptor with a valid TRACE request")
-    void preHandleAuthorisedTrace() throws InvalidTokenPermissionException {
-        setupTokenPermissions();
-        when(request.getMethod()).thenReturn("TRACE");
-        final boolean authorised = true;
-        when(tokenPermissions.hasPermission(permissionKey, Value.READ)).thenReturn(authorised);
-
-        assertTrue(interceptor.preHandle(request, response, HANDLER));
-        verifyNoInteractions(response);
-        verifyNoMoreInteractions(tokenPermissions);
-    }
-
-    @Test
-    @DisplayName("Tests the interceptor with an invalid TRACE request")
-    void preHandleUnauthorisedTrace() throws InvalidTokenPermissionException {
-        setupTokenPermissions();
-        when(request.getMethod()).thenReturn("TRACE");
-        final boolean authorised = false;
-        when(tokenPermissions.hasPermission(permissionKey, Value.READ)).thenReturn(authorised);
-
-        assertFalse(interceptor.preHandle(request, response, HANDLER));
-        verify(response).setStatus(401);
+        if (authorised) {
+            assertTrue(interceptor.preHandle(request, response, HANDLER));
+            verifyNoInteractions(response);
+        } else {
+            assertFalse(interceptor.preHandle(request, response, HANDLER));
+            verify(response).setStatus(401);
+        }
         verifyNoMoreInteractions(tokenPermissions);
     }
 
