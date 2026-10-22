@@ -94,6 +94,11 @@ public class Permission {
         COMPANY_OE_ANNUAL_UPDATE("company_oe_annual_update"),
 
         /**
+         * Key for Acsp associations
+         */
+        ACSP_ASSOCIATIONS("acsp_associations"),
+
+        /**
          * Key for Acsp the user is a member of
          */
         ACSP_NUMBER("acsp_number"),
