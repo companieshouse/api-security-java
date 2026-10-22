@@ -146,7 +146,7 @@ class MappablePermissionsInterceptorTest {
         assertThat(capturedTokenPermissions, isA(TokenPermissionsImpl.class));
     }
 
-    @ParameterizedTest(name = "{index}: preHandle with a {0} request with validity {2}")
+    @ParameterizedTest(name = "{index}: preHandle with a {0} request with validity {2} for permissions {1}")
     @MethodSource({"providePermissions"})
     void preHandleAuthorisedValidity(final String httpMethod, final String[] requiredPermissions,
             final boolean isValid) {
